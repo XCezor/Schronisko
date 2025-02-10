@@ -1,0 +1,3 @@
+# Ignorowanie katalogów:
+__pycache__/
+env/
