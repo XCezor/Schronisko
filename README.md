@@ -2,15 +2,67 @@
 
 ## Potrzebne na start:
 
-### Baza danych:
+### Baza danych PostgreSQL:
 
-- baza o nazwie `html` (w PostgreSQL)
+- baza o nazwie `html` (nazwa tymczasowa!)
+
+```sql
+CREATE DATABASE html;
+
+\c html
+```
+
+- tabele `pets` i `types` 
+
+```sql
+CREATE TABLE types (
+    type_id SERIAL PRIMARY KEY,
+    name VARCHAR(50)
+);
+
+CREATE TABLE pets (
+    pet_id SERIAL PRIMARY KEY,
+    type_id INT REFERENCES types(type_id),
+    name VARCHAR(30),
+    breed VARCHAR(30),
+    age INT,
+    description VARCHAR(1000),
+    date_add TIMESTAMP DEFAULT TIMESTAMP,
+    date_on TIMESTAMP DEFAULT TIMESTAMP,
+    date_off TIMESTAMP DEFAULT TIMESTAMP
+);
+```
 
 - rola (użytkownik) `admin` z hasłem `admin` z uprawnieniami do bazy, tabel
 
+```sql
+CREATE ROLE admin WITH LOGIN PASSWORD 'admin';
+
+GRANT ALL PRIVILEGES ON DATABASE html TO admin;
+
+GRANT ALL PRIVILEGES ON SCHEMA public TO admin;
+```
+
 ### Virtual Environment:
 
-- w terminalu: `pip3 install virtualenv`
+- w terminalu: `pip3 install virtualenv` 
+- lub (jeśli nie działa wcześniejsze) `sudo apt install python3-virtualenv`
+
+### Python 3
+
+### Git
+
+## Przygotowanie środowiska
+
+- Utwórz katalog `Schronisko`, w terminalu wejdź do niego i wpisz `git clone https://github.com/Kamil-Dolkowski/Schronisko.git`
+
+- Następnie wpisz w terminalu `virtualenv env`, by utworzyć virtual environment.
+
+- Włącz env, wpisując `source env/bin/activate`.
+
+- Następnie wpisz `pip3 install flask flask-sqlalchemy` i `pip install psycopg2-binary`, by pobrać potrzebne biblioteki.
+
+- Wyjdź z env poleceniem `deactivate`.
 
 ## Do uruchomienia strony:
 
@@ -20,7 +72,7 @@
 
 ## Jak zobaczyć stronę?
 
-- By zobaczyć stronę, wpisz do paska wyszukiwania w przeglądarce `127.0.0.1:5000` lub `localhost:5000`. Strona powinna się wyświetlić.
+- By zobaczyć stronę, wpisz do paska wyszukiwania w przeglądarce `localhost:5000` lub `127.0.0.1:5000`. Strona powinna się wyświetlić.
 
 ## Co jak chcę wprowadzić zmianę w stronie?
 
