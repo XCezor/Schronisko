@@ -1,0 +1,218 @@
+/* orange: #e55e1a */
+/* grey: #4d485c */
+/* white:  #ffffff */
+
+body
+{
+    background-color: #ffffff;
+    color: #4d485c;
+    margin: 0 !important;
+    font-family: Verdana, sans-serif;
+}
+
+#wrapper
+{
+    width: 100%;
+}
+
+#header
+{
+    width: 100%;
+}
+
+#logo
+{
+    width: 690px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.logo-image
+{
+    float: left;
+}
+
+.logo-name
+{
+    font-size: calc(1rem + 2vw);
+    /* font-size: 40px; */
+    text-align: center;
+    float: left;
+    margin-top: 8%;
+}
+
+.nav
+{
+    width: 100%;
+    padding: 10px 0;
+    background-color: #e55e1a;
+    text-align: center;
+    border-top: 1px solid #751b1b;
+    border-bottom: 1px solid #751b1b;
+}
+
+.content
+{
+    width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.socials
+{
+    width: 100%;
+    background-color: #e55e1a;
+    text-align: center;
+}
+
+.socialdivs
+{
+    width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.fb
+{
+    width:250px;
+    height: 155px;
+    float: left;
+}
+
+.fb:hover
+{
+    background-color: #4668b3;
+}
+
+.yt
+{
+    width:250px;
+    height: 155px;
+    float: left;
+}
+
+.yt:hover
+{
+    background-color: #d94348;
+}
+
+.tw
+{
+    width:250px;
+    height: 155px;
+    float: left;
+}
+
+.tw:hover
+{
+    background-color: #3095d3;
+}
+
+.gplus
+{
+    width:250px;
+    height: 155px;
+    float: left;
+}
+
+.gplus:hover
+{
+    background-color: #d95333;
+}
+
+#footer
+{
+    text-align: center;
+}
+
+ol
+{
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    font-size: 18px;
+    height: 35px;
+    line-height: 200%;
+    display: inline-block;
+    font-family: "Outfit", serif;
+    font-optical-sizing: auto;
+    font-weight: 800;
+    font-style: normal;
+}
+
+ol a
+{
+    color: #ffffff;
+    text-decoration: none;
+    display: block;
+
+}
+
+ol > li
+{
+    float: left;
+    width: 150px;
+    height: 40px;
+    border-right: 1px dashed #751b1b;
+}
+
+ol > li:first-child
+{
+    border-left: 1px dashed #751b1b;
+}
+
+ol > li:hover
+{
+    background-color: #b1341e; 
+}
+
+ol > li:hover > a
+{
+    color: #ffb482; 
+}
+
+ol > li > ul
+{
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    height: 40px;
+    display: none;
+}
+
+ol > li > ul > li
+{
+    background-color: #f1603b; 
+    position: relative;
+    z-index: 100;
+    border-top: 1px dashed #751b1b;
+}
+
+ol > li > ul > li a
+{
+    color:#fdf2d2;
+}
+
+ol > li:hover > ul
+{
+    display: block;
+}
+
+ol > li > ul > li:hover
+{
+    background-color: #ff935c;
+}
+
+ol > li > ul > li:hover > a
+{
+    color: #b1341e;
+}
+
+.sticky
+{
+    width: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 100;
+}

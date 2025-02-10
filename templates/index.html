@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+<div class="content1">
+    <h1>Zwierzęta</h1>
+
+    <table>
+        <tr>
+            <th>Imię</th>
+            <th>Wiek</th>
+            <th>Gatunek</th>
+            <th>Opis</th>
+        </tr>
+        {% for animal in animals %}
+        <tr>
+            <td>{{ animal.name }}</td>
+            <td>{{ animal.age }}</td>
+            <td>{{ animal.type }}</td>
+            <td>{{ animal.description }}</td>
+
+        </tr>
+        {% endfor %}
+    </table>
+
+    <a href="add">Dodaj zwierzę</a>
+
+</div>
+{% endblock %}
