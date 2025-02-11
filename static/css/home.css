@@ -76,12 +76,6 @@
     text-align: center;
 }
 
-#adoption-in-a-nutshell
-{
-    min-height: 10vw;
-    text-align: center;
-}
-
 .img-desc-button-box
 {
     width: 100%;
@@ -110,7 +104,8 @@
     width: 50%;
     height: 100%;
     float: left;
-    background-color: #4d485c;
+    background-color: rgba(70, 72, 114, 1);
+    background-image: linear-gradient(164deg, rgba(70, 72, 114, 1) 22%, rgba(77, 72, 92, 1) 72%);
     border-top-right-radius: 25px;
     border-bottom-right-radius: 25px;
 }
@@ -122,13 +117,11 @@
     margin: 30px;
     padding: 10px;
     text-align: left;
-    border-radius: 20px;
-    background-color: #e55e1a;
-    color: white;
+    border-radius: 25px;
     font-size: x-large;
-    -webkit-box-shadow: inset -11px -11px 37px -11px rgba(178, 63, 26, 1);
-    -moz-box-shadow: inset -11px -11px 37px -11px rgba(178, 63, 26, 1);
-    box-shadow: inset -11px -11px 37px -11px rgba(178, 63, 26, 1);
+    background-color: rgba(244, 124, 57, 1);
+    background-image: linear-gradient(149deg, rgba(244, 124, 57, 1) 7%, rgba(229, 94, 26, 1) 86%);
+    color: white;
 }
 
 .img-desc-button-box_button
@@ -145,26 +138,65 @@
     width: 100%;
     height: 100%;
     border-radius: 25px;
+    border-width: 0;
     font-size: 20px;
-    background-color: #e55e1a;
-    border-color: #e55e1a;
+    background-color: rgba(244, 124, 57, 1);
+    background-image: linear-gradient(149deg, rgba(244, 124, 57, 1) 7%, rgba(229, 94, 26, 1) 86%);
     color: white;
     font-weight: 700;
 }
 
 .img-desc-button-box_button input:hover
 {
-    background-color: #fa651b;
+    background-color: white;
+    color: #e55e1a;
+
+}
+
+#adoption-in-a-nutshell
+{
+    min-height: 10vw;
+    text-align: center;
+}
+
+.info-blocks-module
+{
+    display: flex;
+    justify-content: center; 
 }
 
 .info-block
 {
-    width: 30%;
-    height: 20vw;
+    width: 200px;
+    height: 300px;
     margin: 1vw;
-    float: left;
-    background-color: aqua;
+    padding: 1vw;
+    background-color: rgba(70, 72, 114, 1);
+    background-image: linear-gradient(164deg, rgba(70, 72, 114, 1) 22%, rgba(77, 72, 92, 1) 72%);
+    border-radius: 4vw;
+    color: white;
 }
+
+.info-block-img
+{
+    margin-top: 30px;
+}
+
+.info-block-img img
+{
+    width: 100px;
+    height: 100px;
+}
+
+.info-block-text
+{
+    padding: 20px;
+    font-size: large;
+    font-weight: 600;
+    text-align: center;
+    color: white;
+}
+
 /* orange: #e55e1a */
 /* grey: #4d485c */
 /* white:  #ffffff */
