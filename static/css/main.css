@@ -179,40 +179,64 @@ ol > li > ul > li:hover > a
 
 .facebook
 {
-    width: 20%;
-    height: 20%;
+    width: 10%;
+    height: 10%;
+    margin: 10px;
     text-align: center;
     float: left;
+}
+
+.facebook img
+{
+    width: 100%;
+    height: 100%;
 }
 
 .facebook:hover
 {
-    background-color: #4668b3;
+    background-color: #ffffff28;
+    border-radius: 100%;
 }
 
 .instagram
 {
-    width: 20%;
-    height: 20%;
+    width: 10%;
+    height: 10%;
+    margin: 10px;
     text-align: center;
     float: left;
+}
+
+.instagram img
+{
+    width: 100%;
+    height: 100%;
 }
 
 .instagram:hover
 {
-    background-color: #eb35cc;
+    background-color: #ffffff28;
+    border-radius: 10%;
 }
 
 .tiktok
 {
-    width: 20%;
-    height: 20%;
+    width: 10%;
+    height: 10%;
+    margin: 10px;
     text-align: center;
     float: left;
 }
 
+.tiktok img
+{
+    width: 100%;
+    height: 100%;
+}
+
 .tiktok:hover
 {
-    background-color: #000000;
+    background-color: #ffffff28;
+    border-radius: 100%;
 }
 
