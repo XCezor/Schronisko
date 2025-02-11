@@ -157,7 +157,9 @@ ol > li > ul > li:hover > a
     height: 200px;
     padding: 0 20px;
     text-align: center;
-    background-color: #b23f1a;
+    /* background-color: #b23f1a; */
+    background-color: rgba(178, 63, 26, 1);
+    background-image: linear-gradient(168deg, rgba(178, 63, 26, 1) 26%, rgba(198, 74, 23, 1) 57%);
     border-top: 30px solid #e55e1a;
     color: white;
 }
