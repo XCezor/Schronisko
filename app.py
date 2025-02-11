@@ -27,10 +27,12 @@ class Types(db.Model):
     
 
 @app.route("/")
-def hello():
-    db.create_all()
+def home():
+    return render_template("home.html")
 
-    # pets = Pets.query.all()
+
+@app.route("/pets")
+def pets():    
     pets = db.session.query(Pets.name, Pets.age, Types.name.label("type"), Pets.description).join(Types, Types.type_id == Pets.type_id).all()
 
     return render_template("index.html", animals=pets)
