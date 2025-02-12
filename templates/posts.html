@@ -15,7 +15,7 @@
         Autor: {{ post.author }} <br/>
         Data: {{ post.post_datetime.strftime('%Y-%m-%d %H:%M') }}
 
-        <p>{{ post.description }}</p>
+        <p>{{ post.description|truncate(300) }}</p>
         <a href="{{ url_for('post', id=post.post_id) }}">Więcej</a>
 
     </div>
