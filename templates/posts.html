@@ -1,12 +1,26 @@
 {% extends 'base.html' %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/posts.css') }}">
+{% endblock %}
+
 {% block body %}
 
 <h1>AKTUALNOŚCI</h1>
 
-<p>Post 1</p>
-<p>Post 2</p>
-<p>Post 3</p>
+{% for post in posts %}
+
+    <div class="post-box">
+        <h2>{{ post.title }}</h2>
+        Autor: {{ post.author }} <br/>
+        Data: {{ post.post_datetime.strftime('%Y-%m-%d %H:%M') }}
+
+        <p>{{ post.description }}</p>
+        <a href="{{ url_for('post', id=post.post_id) }}">Więcej</a>
+
+    </div>
+
+{% endfor %}
 
 <a href="/aktualnosci/dodaj-post">Dodaj post</a>
 

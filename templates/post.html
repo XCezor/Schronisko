@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/posts.css') }}">
+{% endblock %}
+
+{% block body %}
+
+<div class="post-box">
+    <h1>{{ post.title }}</h1>
+    Autor: {{ post.author }} <br/>
+    Data: {{ post.post_datetime.strftime('%Y-%m-%d %H:%M') }}
+
+    <p>{{ post.description }}</p>
+</div>
+
+<a href="/aktualnosci">Powrót</a>
+
+{% endblock %}

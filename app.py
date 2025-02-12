@@ -8,7 +8,9 @@ from datetime import datetime
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = "Ad0ptujPs4LubK0t4"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://admin:admin@localhost/html'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://application:Ad0ptujPs4LubK0t4@localhost/schronisko'
+
+# Database
 
 db = SQLAlchemy(app)
 
@@ -18,21 +20,31 @@ class Pets(db.Model):
     name = db.Column(db.String(30))
     breed = db.Column(db.String(30))
     age = db.Column(db.Integer)
-    description = db.Column(db.String(1000))
-    date_add = db.Column(db.TIMESTAMP, default=datetime.utcnow())
-    date_on = db.Column(db.TIMESTAMP, default=datetime.utcnow())
-    date_off = db.Column(db.TIMESTAMP, default=datetime.utcnow())
+    description = db.Column(db.Text)
+    date_add = db.Column(db.TIMESTAMP, default=datetime.utcnow)
+    date_on = db.Column(db.TIMESTAMP, default=datetime.utcnow)
+    date_off = db.Column(db.TIMESTAMP, default=datetime.utcnow)
 
     type = db.relationship('Types', backref='pets', lazy=True)
 
 class Types(db.Model):
     type_id = db.Column(db.Integer, primary_key=True) 
-    name = db.Column(db.String(50))
-    
+    name = db.Column(db.String(20))
+
+class Posts(db.Model):
+    post_id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    author = db.Column(db.String(50), server_default='Brak')
+    description = db.Column(db.Text, nullable=False)
+    post_datetime = db.Column(db.DateTime, default=datetime.utcnow)
+    last_edit_datetime = db.Column(db.DateTime, default=None)
+
+# Forms
 
 class PostForm(FlaskForm):
     title = StringField("Tytuł", validators=[DataRequired()])
-    # description = StringField("Opis", validators=[DataRequired()])
+    author = StringField("Autor (opcjonalne):")
+    description = StringField("Opis", validators=[DataRequired()])
     submit = SubmitField("Dodaj")
 
 @app.route("/")
@@ -41,21 +53,33 @@ def home():
 
 @app.route("/aktualnosci")
 def posts():
-    return render_template("posts.html")
+    posts = Posts.query.order_by(Posts.post_datetime.desc())
+    return render_template("posts.html", posts=posts)
 
+@app.route("/aktualnosci/<int:id>")
+def post(id):
+    post = Posts.query.get_or_404(id)
+    return render_template("post.html", post=post)
 
 @app.route("/aktualnosci/dodaj-post", methods=['GET', 'POST'])
 def add_post():
-    title = None
     form = PostForm()
     if form.validate_on_submit():
-        title = form.title.data
+        post = Posts(
+            title = form.title.data, 
+            author = form.author.data or 'Brak',
+            description = form.description.data
+            )
+        
         form.title.data = ''
+        form.author.data = ''
+        form.description.data = ''
+
+        db.session.add(post)
+        db.session.commit()
         flash("Dodano post!")
 
-    return render_template("add_post.html",
-        title = title,
-        form = form )
+    return render_template("add_post.html", form=form)
 
 
 @app.route("/pets")
