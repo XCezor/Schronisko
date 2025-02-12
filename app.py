@@ -1,9 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
+from flask_migrate import Migrate
+import psycopg2
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
-import psycopg2
 from datetime import datetime
 
 app = Flask(__name__)
@@ -13,6 +15,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://application:Ad0ptujPs4LubK
 # Baza danych
 
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 class Pets(db.Model):
     pet_id = db.Column(db.Integer, primary_key=True)
@@ -38,6 +41,7 @@ class Posts(db.Model):
     description = db.Column(db.Text, nullable=False)
     post_datetime = db.Column(db.DateTime, default=datetime.utcnow)
     last_edit_datetime = db.Column(db.DateTime, default=None)
+    is_deleted = db.Column(db.Boolean, server_default=text('FALSE'))
 
 # Formularze
 
@@ -115,6 +119,14 @@ def edit_post(id):
     form.author.data = post.author
     form.description.data = post.description
     return render_template('edit_post.html', form=form)
+
+# Usuwanie posta
+@app.route("/aktualnosci/usuwanie-posta/<int:id>")
+def delete_post(id):
+    post_to_delete = Posts.query.get_or_404(id)
+
+    
+
 
 
 # ????
