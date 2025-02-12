@@ -10,7 +10,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = "Ad0ptujPs4LubK0t4"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://application:Ad0ptujPs4LubK0t4@localhost/schronisko'
 
-# Database
+# Baza danych
 
 db = SQLAlchemy(app)
 
@@ -39,7 +39,7 @@ class Posts(db.Model):
     post_datetime = db.Column(db.DateTime, default=datetime.utcnow)
     last_edit_datetime = db.Column(db.DateTime, default=None)
 
-# Forms
+# Formularze
 
 class PostForm(FlaskForm):
     title = StringField("Tytuł", validators=[DataRequired()])
@@ -55,16 +55,19 @@ def home():
 
 # Aktualności - posty
 
+# Wyświetlanie wszystkich postów
 @app.route("/aktualnosci")
 def posts():
     posts = Posts.query.order_by(Posts.post_datetime.desc())
     return render_template("posts.html", posts=posts)
 
+# Wyświetlenie szczegółów posta
 @app.route("/aktualnosci/<int:id>")
 def post(id):
     post = Posts.query.get_or_404(id)
     return render_template("post.html", post=post)
 
+# Dodawanie nowego posta
 @app.route("/aktualnosci/dodaj-post", methods=['GET', 'POST'])
 def add_post():
     form = PostForm()
@@ -85,6 +88,7 @@ def add_post():
 
     return render_template("add_post.html", form=form)
 
+# Edycja posta
 @app.route("/aktualnosci/edytuj-post/<int:id>", methods=['GET', 'POST'])
 def edit_post(id):
     post = Posts.query.get_or_404(id)
