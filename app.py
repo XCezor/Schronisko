@@ -53,20 +53,12 @@ def add_animal():
     
 
 
-# @app.route('/animals')
-# def get_animals():
-#     animals = Animal.query.all()
-#     animals_list = '<br>'.join([f'{animal.name}, {animal.species}' for animal in animals])
-#     return animals_list
 
-# @app.route('/delete/<int:id>', methods=['GET'])
-# def delete_animal(id):
-#     animal_to_delete = Animal.query.get(id)
-    
-#     if animal_to_delete:
-#         db.session.delete(animal_to_delete)  
-#         db.session.commit()
-    
-#     animals = Animal.query.all()
 
-#     return f'Usunięto zwierzę o id={id}'
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.html"), 404
+
+@app.errorhandler(500)
+def page_not_found(e):
+    return render_template("500.html"), 500
