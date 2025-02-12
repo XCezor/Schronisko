@@ -1,9 +1,13 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField
+from wtforms.validators import DataRequired
 import psycopg2
 from datetime import datetime
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = "Ad0ptujPs4LubK0t4"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://admin:admin@localhost/html'
 
 db = SQLAlchemy(app)
@@ -26,13 +30,32 @@ class Types(db.Model):
     name = db.Column(db.String(50))
     
 
+class PostForm(FlaskForm):
+    title = StringField("Tytuł", validators=[DataRequired()])
+    # description = StringField("Opis", validators=[DataRequired()])
+    submit = SubmitField("Dodaj")
+
 @app.route("/")
 def home():
     return render_template("home.html")
 
 @app.route("/aktualnosci")
-def aktualnosci():
+def posts():
     return render_template("posts.html")
+
+
+@app.route("/aktualnosci/dodaj-post", methods=['GET', 'POST'])
+def add_post():
+    title = None
+    form = PostForm()
+    if form.validate_on_submit():
+        title = form.title.data
+        form.title.data = ''
+        flash("Dodano post!")
+
+    return render_template("add_post.html",
+        title = title,
+        form = form )
 
 
 @app.route("/pets")
