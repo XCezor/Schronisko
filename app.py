@@ -47,9 +47,13 @@ class PostForm(FlaskForm):
     description = StringField("Opis", validators=[DataRequired()])
     submit = SubmitField("Dodaj")
 
+# Strona główna
+
 @app.route("/")
 def home():
     return render_template("home.html")
+
+# Aktualności - posty
 
 @app.route("/aktualnosci")
 def posts():
@@ -81,6 +85,35 @@ def add_post():
 
     return render_template("add_post.html", form=form)
 
+@app.route("/aktualnosci/edytuj-post/<int:id>", methods=['GET', 'POST'])
+def edit_post(id):
+    post = Posts.query.get_or_404(id)
+
+    form = PostForm()
+
+    if form.validate_on_submit():
+        
+        post.title = form.title.data, 
+        post.author = form.author.data or 'Brak',
+        post.description = form.description.data
+        
+        form.title.data = ''
+        form.author.data = ''
+        form.description.data = ''
+
+        db.session.add(post)
+        db.session.commit()
+        flash("Zapisano zmiany!")
+
+        return redirect(url_for('post', id=post.post_id))
+    
+    form.title.data = post.title
+    form.author.data = post.author
+    form.description.data = post.description
+    return render_template('edit_post.html', form=form)
+
+
+# ????
 
 @app.route("/pets")
 def pets():    

@@ -2,15 +2,7 @@
 
 {% block body %}
 
-{% for message in get_flashed_messages() %}
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-{% endfor %}
-
-
-<h1>Dodaj post ...</h1>
+<h1>Edytuj post ...</h1>
 
 <form method="POST">
     {{ form.hidden_tag() }}
@@ -22,7 +14,7 @@
     {{ form.author }}
     <br/>
     {{ form.description.label }}
-    {{ form.description(rows="10") }}
+    {{ form.description }}
     <br/>
     {{ form.submit() }}
 </form>
