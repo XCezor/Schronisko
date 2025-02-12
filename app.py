@@ -30,6 +30,10 @@ class Types(db.Model):
 def home():
     return render_template("home.html")
 
+@app.route("/aktualnosci")
+def aktualnosci():
+    return render_template("posts.html")
+
 
 @app.route("/pets")
 def pets():    
