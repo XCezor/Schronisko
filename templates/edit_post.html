@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<h1>Edytuj post ...</h1>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+
+    {{ form.title.label }}
+    {{ form.title }}
+    <br/>
+    {{ form.author.label }}
+    {{ form.author }}
+    <br/>
+    {{ form.description.label }}
+    {{ form.description }}
+    <br/>
+    {{ form.submit() }}
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+
+{% endblock %}

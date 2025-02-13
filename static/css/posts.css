@@ -1,0 +1,14 @@
+/* orange: #e55e1a */
+/* grey: #4d485c */
+/* white:  #ffffff */
+/* brown: #b23f1a*/
+
+.post-box
+{
+    width: 80%;
+    margin: 10px;
+    padding: 20px;
+    border-radius: 25px;
+    background-color: #e55e1a;
+}
+

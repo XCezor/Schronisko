@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/posts.css') }}">
+{% endblock %}
+
+{% block body %}
+
+{% for message in get_flashed_messages() %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+{% endfor %}
+
+<div class="post-box">
+    <h1>{{ post.title }}</h1>
+    Autor: {{ post.author }} <br/>
+    Data: {{ post.post_datetime.strftime('%Y-%m-%d %H:%M') }}
+
+    <p>{{ post.description }}</p>
+</div>
+
+<a href="/aktualnosci">Powrót</a>
+
+<a href="{{ url_for('edit_post', id=post.post_id) }}">Edytuj post</a>
+
+<a href="{{ url_for('delete_post', id=post.post_id) }}">Usuń post</a>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+
+{% endblock %}
