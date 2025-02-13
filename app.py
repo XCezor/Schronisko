@@ -6,9 +6,12 @@ import psycopg2
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
+from flask_ckeditor import CKEditor
+from flask_ckeditor import CKEditorField
 from datetime import datetime
 
 app = Flask(__name__)
+ckeditor = CKEditor(app)
 app.config['SECRET_KEY'] = "Ad0ptujPs4LubK0t4"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://application:Ad0ptujPs4LubK0t4@localhost/schronisko'
 
@@ -48,7 +51,8 @@ class Posts(db.Model):
 class PostForm(FlaskForm):
     title = StringField("Tytuł", validators=[DataRequired()])
     author = StringField("Autor (opcjonalne):")
-    description = StringField("Opis", validators=[DataRequired()])
+    # description = StringField("Opis", validators=[DataRequired()])
+    description = CKEditorField("Opis", validators=[DataRequired()])
     submit = SubmitField("Dodaj")
 
 # Strona główna
