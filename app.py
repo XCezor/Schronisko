@@ -51,7 +51,6 @@ class Posts(db.Model):
 class PostForm(FlaskForm):
     title = StringField("Tytuł", validators=[DataRequired()])
     author = StringField("Autor (opcjonalne):")
-    # description = StringField("Opis", validators=[DataRequired()])
     description = CKEditorField("Opis", validators=[DataRequired()])
     submit = SubmitField("Dodaj")
 
