@@ -8,6 +8,8 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 from flask_ckeditor import CKEditor
 from flask_ckeditor import CKEditorField
+import bleach
+from bs4 import BeautifulSoup
 from datetime import datetime
 
 app = Flask(__name__)
@@ -66,6 +68,10 @@ def home():
 @app.route("/aktualnosci")
 def posts():
     posts = Posts.query.order_by(Posts.post_datetime.desc()).filter(Posts.is_deleted == 'FALSE')
+    # for post in posts:
+    #     # ucinanie opisu posta do 300 znaków i dopisywanie brakujących tagów html
+    #     soup = BeautifulSoup(post.description[:300], 'html.parser')
+    #     post.description = soup.prettify()
     return render_template("posts.html", posts=posts)
 
 # Wyświetlenie szczegółów posta
