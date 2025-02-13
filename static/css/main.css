@@ -57,7 +57,7 @@ body
     border-bottom: 1px solid #751b1b;
 }
 
-ol
+#nav ol
 {
     padding: 0;
     margin: 0;
@@ -72,7 +72,7 @@ ol
     font-style: normal;
 }
 
-ol a
+#nav ol a
 {
     color: #ffffff;
     text-decoration: none;
@@ -80,7 +80,7 @@ ol a
 
 }
 
-ol > li
+#nav ol > li
 {
     float: left;
     width: 150px;
@@ -88,22 +88,22 @@ ol > li
     border-right: 1px dashed #751b1b;
 }
 
-ol > li:first-child
+#nav ol > li:first-child
 {
     border-left: 1px dashed #751b1b;
 }
 
-ol > li:hover
+#nav ol > li:hover
 {
     background-color: #b1341e; 
 }
 
-ol > li:hover > a
+#nav ol > li:hover > a
 {
     color: #ffb482; 
 }
 
-ol > li > ul
+#nav ol > li > ul
 {
     list-style-type: none;
     padding: 0;
@@ -112,7 +112,7 @@ ol > li > ul
     display: none;
 }
 
-ol > li > ul > li
+#nav ol > li > ul > li
 {
     background-color: #f1603b; 
     position: relative;
@@ -120,22 +120,22 @@ ol > li > ul > li
     border-top: 1px dashed #751b1b;
 }
 
-ol > li > ul > li a
+#nav ol > li > ul > li a
 {
     color:#fdf2d2;
 }
 
-ol > li:hover > ul
+#nav ol > li:hover > ul
 {
     display: block;
 }
 
-ol > li > ul > li:hover
+#nav ol > li > ul > li:hover
 {
     background-color: #ff935c;
 }
 
-ol > li > ul > li:hover > a
+#nav ol > li > ul > li:hover > a
 {
     color: #b1341e;
 }
