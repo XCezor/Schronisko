@@ -41,7 +41,7 @@ class Posts(db.Model):
     description = db.Column(db.Text, nullable=False)
     post_datetime = db.Column(db.DateTime, default=datetime.utcnow)
     last_edit_datetime = db.Column(db.DateTime, default=None)
-    is_deleted = db.Column(db.Boolean, server_default=text('FALSE'))
+    is_deleted = db.Column(db.Boolean, server_default="false")
 
 # Formularze
 
@@ -62,7 +62,7 @@ def home():
 # Wyświetlanie wszystkich postów
 @app.route("/aktualnosci")
 def posts():
-    posts = Posts.query.order_by(Posts.post_datetime.desc())
+    posts = Posts.query.order_by(Posts.post_datetime.desc()).filter(Posts.is_deleted == 'FALSE')
     return render_template("posts.html", posts=posts)
 
 # Wyświetlenie szczegółów posta
@@ -124,6 +124,14 @@ def edit_post(id):
 @app.route("/aktualnosci/usuwanie-posta/<int:id>")
 def delete_post(id):
     post_to_delete = Posts.query.get_or_404(id)
+
+    post_to_delete.is_deleted = True
+
+    db.session.add(post_to_delete)
+    db.session.commit()
+    flash("Usunięto post.")
+
+    return redirect(url_for('posts'))
 
     
 
