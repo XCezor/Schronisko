@@ -18,7 +18,8 @@
         <div id="header">
             <div id="logo">
                 <div class="logo-image">
-                    <img src="static/images/logo.png" alt="Logo schroniska"/>
+                    <a href= "/">
+                    <img src="static/images/logo.png" alt="Logo schroniska"/></a>
                 </div>
                 <div class="logo-name">
                     Schronisko dla zwierząt <br/>w Płocku
@@ -26,7 +27,32 @@
                 <div style="clear: both"></div>
             </div>
         </div>
-        <div id="nav">
+        <nav class="navbar">
+            <button class="hamburger">☰</button>
+            <ul class="nav-links">
+                <li><a href="#">Aktualności</a></li>
+                <li>
+                    <a href="#">Zwierzęta</a>
+                    <ul>
+                        <li><a href="#">W schronisku</a></li>  
+                        <li><a href="#">Do adopcji</a></li>
+                        <li><a href="#">Znalazły dom</a></li>
+                        <li><a href="#">Znalezione</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#">Info</a>
+                    <ul>
+                        <li><a href="#">Adopcja - co trzeba wiedzieć?</a></li>
+                        <li><a href="#">Po adopcji - co dalej?</a></li>
+                        <li><a href="#">Częste pytania</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Kontakt</a></li>
+                <li><a href="#">Logowanie</a></li>
+            </ul>
+          </nav>
+        <!-- <div id="nav">
             <ol>
                 <li><a href="#">Aktualności</a></li>
                 <li><a href="#">Zwierzęta</a>
@@ -47,7 +73,27 @@
                 <li><a href="#">Kontakt</a></li>
                 <li><a href="#">Logowanie</a></li>
             </ol>
-        </div>
+            <ol class ="sidebar">
+                <li><a href="#">Aktualności</a></li>
+                <li><a href="#">Zwierzęta</a>
+                    <ul>
+                        <li><a href="#">W schronisku</a></li>
+                        <li><a href="#">Do adopcji</a></li>
+                        <li><a href="#">Znalazły dom</a></li>
+                        <li><a href="#">Znalezione</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Info</a>
+                    <ul>
+                        <li><a href="#">Adopcja - co trzeba wiedzieć?</a></li>
+                        <li><a href="#">Po adopcji - co dalej?</a></li>
+                        <li><a href="#">Częste pytania</a></li>
+                    </ul>
+                </li>
+                <li><a href="#">Kontakt</a></li>
+                <li><a href="#">Logowanie</a></li>
+            </ol>
+        </div> -->
         <div id="content">
             {% block body %}{% endblock %}
         </div>
@@ -79,6 +125,21 @@
         </div>
     </div>
 
+    <!-- <script>
+        let menuList = document.getElementById("menuList")
+        menuList.style.maxHeight = "0px";
+
+        function toggleMenu(){
+            if(menuList.style.maxHeight == "0px"){
+                menuList.style.maxHeight = "300px";
+            }
+            else{
+                menuList.style.maxHeight = "0px";
+            }
+        }
+    </script> -->
+
+
     <script src="static/jquery-3.7.1.min.js"></script>
     <script>
  
@@ -104,6 +165,12 @@
          
     </script>
 
+    <script>
+        document.querySelector(".hamburger").addEventListener("click", function() {
+            document.querySelector(".nav-links").classList.toggle("active");
+        });
+
+    </script>
 </body>
 
 </html>
