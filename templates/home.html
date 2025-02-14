@@ -12,7 +12,6 @@
             <img id="slajd1" src="static/images/pies1.jpg"/>
             <img id="slajd2" src="static/images/pies2.avif"/>
             <img id="slajd3" src="static/images/pies3.jpg"/>
-            
         </div>
         <div class="slider-nav">
             <a href="#slajd1"></a>
@@ -102,4 +101,22 @@
 
     setInterval(nextSlide, 6000); // Przejście co 3 sekundy
 </script>
+
+<script>
+document.querySelectorAll(".slider-nav a").forEach((link, index) => {
+    link.addEventListener("click", function(event) {
+        event.preventDefault(); // Zatrzymuje przewijanie strony
+
+        const slider = document.querySelector(".slider");
+        const slideWidth = slider.clientWidth; // Pobiera szerokość slajdu
+
+        slider.scrollTo({
+            left: slideWidth * index, // Przesuwa slider na właściwą pozycję
+            behavior: "smooth" // Płynne przewijanie
+        });
+    });
+});
+
+</script>
 {% endblock %}
+
