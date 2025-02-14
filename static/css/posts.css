@@ -6,6 +6,7 @@
 .post-box
 {
     width: 80%;
+    word-wrap: break-word;
     margin: 10px;
     padding: 20px;
     border-radius: 25px;
