@@ -18,7 +18,7 @@
     Autor: {{ post.author }} <br/>
     Data: {{ post.post_datetime.strftime('%Y-%m-%d %H:%M') }}
 
-    <p>{{ post.description }}</p>
+    <p>{{ post.description|safe }}</p>
 </div>
 
 <a href="/aktualnosci">Powrót</a>

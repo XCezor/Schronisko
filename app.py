@@ -6,9 +6,14 @@ import psycopg2
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
+from flask_ckeditor import CKEditor
+from flask_ckeditor import CKEditorField
+import bleach
+from bs4 import BeautifulSoup
 from datetime import datetime
 
 app = Flask(__name__)
+ckeditor = CKEditor(app)
 app.config['SECRET_KEY'] = "Ad0ptujPs4LubK0t4"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://application:Ad0ptujPs4LubK0t4@localhost/schronisko'
 
@@ -48,7 +53,7 @@ class Posts(db.Model):
 class PostForm(FlaskForm):
     title = StringField("Tytuł", validators=[DataRequired()])
     author = StringField("Autor (opcjonalne):")
-    description = StringField("Opis", validators=[DataRequired()])
+    description = CKEditorField("Opis", validators=[DataRequired()])
     submit = SubmitField("Dodaj")
 
 # Strona główna
@@ -63,6 +68,43 @@ def home():
 @app.route("/aktualnosci")
 def posts():
     posts = Posts.query.order_by(Posts.post_datetime.desc()).filter(Posts.is_deleted == 'FALSE')
+    for post in posts:
+        # ucinanie opisu posta do 300 znaków i dopisywanie brakujących tagów html
+        
+        original_length = len(bleach.clean(post.description))
+        soup = BeautifulSoup(post.description, 'html.parser')
+        paragraphs = soup.find_all('p')
+        first_two_paragraphs = paragraphs[:2]
+
+        post.description = ''
+        number_of_chars = 0
+        for p in first_two_paragraphs:
+            if len(post.description + str(p)) > 300:
+                post.description += str(p)[:300-number_of_chars]
+                break
+            post.description += str(p)
+            number_of_chars += len(post.description)
+
+        exit_length = len(bleach.clean(post.description))
+
+        if original_length != exit_length + 1:
+            print(original_length)
+            print(exit_length)
+            post.description = post.description[0:-4] + " ...</p>"
+        
+        post.description = bleach.clean(post.description, tags={'p','strong','em','s'}, strip=True)
+        
+        # -------------------------------------------------
+
+        # post.description = bleach.clean(post.description, tags={'p','strong','em','table','tbody','tr','td','ol','ul','li'}, strip=True)
+
+        # soup = BeautifulSoup(post.description[:300], 'html.parser')
+        # table_all = soup.find_all('table')
+        # [table.decompose() for table in table_all]
+
+        # post.description = soup.prettify()
+        # if len(post.description) > 300:
+        #     post.description = post.description[0:-9] + " ...</p>"
     return render_template("posts.html", posts=posts)
 
 # Wyświetlenie szczegółów posta
