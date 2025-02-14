@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<h1>Utwórz konto</h1>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+
+    {{ form.name.label }}
+    {{ form.name }}
+    <br/>
+    {{ form.surname.label }}
+    {{ form.surname }}
+    <br/>
+    {{ form.email.label }}
+    {{ form.email }}
+    <br/>
+    {{ form.password_hash.label }}
+    {{ form.password_hash }}
+    <br/>
+    {{ form.password_hash2.label }}
+    {{ form.password_hash2 }}
+    <br/>
+    {{ form.submit() }}
+</form>
+
+{% endblock %}
