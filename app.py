@@ -4,8 +4,8 @@ from sqlalchemy import text
 from flask_migrate import Migrate
 import psycopg2
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms import StringField, SubmitField, PasswordField, EmailField, BooleanField, ValidationError
+from wtforms.validators import DataRequired, EqualTo, Length
 from flask_ckeditor import CKEditor
 from flask_ckeditor import CKEditorField
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -29,7 +29,7 @@ class Users(db.Model):
     surname = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), nullable=False)
     add_date = db.Column(db.DateTime, nullable=False, default=datetime.now)
-    password_hash = db.Column(db.String(128), nullable=False)
+    password_hash = db.Column(db.Text, nullable=False)
 
     @property
     def password(self):
@@ -75,6 +75,19 @@ class PostForm(FlaskForm):
     author = StringField("Autor (opcjonalne):")
     description = CKEditorField("Opis", validators=[DataRequired()])
     submit = SubmitField("Dodaj")
+
+class UserForm(FlaskForm):
+    name = StringField("Imię", validators=[DataRequired()])
+    surname = StringField("Nazwisko", validators=[DataRequired()])
+    email = EmailField("Email", validators=[DataRequired()])
+    password_hash = PasswordField("Hasło", validators=[DataRequired(), EqualTo('password_hash2', message='Podane hasła muszą być te same.')])
+    password_hash2 = PasswordField("Potwierdź hasło", validators=[DataRequired()])
+    submit = SubmitField("Utwórz")  
+
+class LoggingForm(FlaskForm):
+    login = StringField("Login", validators=[DataRequired()])
+    password = PasswordField("Hasło", validators=[DataRequired()])
+    submit = SubmitField("Zaloguj")  
 
 # Strona główna
 
@@ -195,8 +208,39 @@ def delete_post(id):
 
     return redirect(url_for('posts'))
 
-    
+# Logowanie
+@app.route("/logowanie", methods=['GET', 'POST'])
+def logging():
+    form = LoggingForm()
+    return render_template("logging.html", form=form)
 
+# Tworzenie konta
+@app.route("/utworz-konto", methods=['GET', 'POST'])
+def create_user():
+    form = UserForm()
+
+    if form.validate_on_submit():
+        user = Users.query.filter_by(email=form.email.data).first()
+        if user is None:
+            hashed_password = generate_password_hash(form.password_hash.data)
+            user = Users(
+                name=form.name.data,
+                surname=form.surname.data,
+                email=form.email.data,
+                password_hash=hashed_password
+                )
+            db.session.add(user)
+            db.session.commit()
+
+        form.name.data = ''
+        form.surname.data = ''
+        form.email.data = ''
+        form.password_hash.data = ''
+        form.password_hash2.data = ''
+
+        flash("Utworzono konto.")
+        return render_template("create_user.html", form=form)
+    return render_template("create_user.html", form=form)
 
 
 # ????
