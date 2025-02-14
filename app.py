@@ -8,6 +8,7 @@ from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 from flask_ckeditor import CKEditor
 from flask_ckeditor import CKEditorField
+from werkzeug.security import generate_password_hash, check_password_hash
 import bleach
 from bs4 import BeautifulSoup
 from datetime import datetime
@@ -21,6 +22,25 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://application:Ad0ptujPs4LubK
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+
+class Users(db.Model):
+    user_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    surname = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    add_date = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    password_hash = db.Column(db.String(128), nullable=False)
+
+    @property
+    def password(self):
+        raise AttributeError('Password is not a readable attribute.')
+    
+    @password.setter
+    def password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
 class Pets(db.Model):
     pet_id = db.Column(db.Integer, primary_key=True)
