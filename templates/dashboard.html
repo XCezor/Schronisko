@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<h1>Moje konto</h1>
+
+<br/><br/>
+<h3>Informacje o użytkowniku:</h3>
+
+<strong>Nazwa: </strong>
+{{ current_user.username }}<br/>
+
+<strong>Imię:</strong>
+{{ current_user.name }}<br/>
+
+<strong>Nazwisko:</strong>
+{{ current_user.surname }}<br/>
+
+<strong>Email:</strong>
+{{ current_user.email }}<br/>
+
+<strong>Data utworzenia:</strong>
+{{ current_user.add_date.strftime('%Y-%m-%d %H:%M') }}<br/>
+
+<br/><br/>
+
+<h3>Edytuj konto</h3>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+
+    {{ form.username.label }}
+    {{ form.username }}
+    <br/>
+    {{ form.name.label }}
+    {{ form.name }}
+    <br/>
+    {{ form.surname.label }}
+    {{ form.surname }}
+    <br/>
+    {{ form.email.label }}
+    {{ form.email }}
+    <br/>
+    {{ form.submit() }}
+</form>
+
+{% endblock %}
