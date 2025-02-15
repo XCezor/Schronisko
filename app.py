@@ -250,10 +250,34 @@ def logout():
     return redirect(url_for('login'))
 
 # Dashboard
-@app.route("/dashboard")
+@app.route("/moje-konto", methods=['GET', 'POST'])
 @login_required
 def dashboard():
-    return render_template("dashboard.html")
+    form = UserForm()
+    id = current_user.user_id
+    user_to_update = Users.query.get_or_404(id)
+    
+    form.submit.label.text = 'Zmień'
+
+    if request.method == 'POST':
+        user_to_update.username = request.form['username']
+        user_to_update.name = request.form['name']
+        user_to_update.surname = request.form['surname']
+        user_to_update.email = request.form['email']
+
+        try:
+            db.session.commit()
+            flash("Zapisano zmiany.")
+        except:
+            flash("Nie można zapisać zmian.")
+        return render_template("dashboard.html", form=form, user_to_update=user_to_update)
+
+    form.username.data = user_to_update.username
+    form.name.data = user_to_update.name
+    form.surname.data = user_to_update.surname
+    form.email.data = user_to_update.email
+    
+    return render_template("dashboard.html", form=form)
 
 # Tworzenie konta
 @app.route("/utworz-konto", methods=['GET', 'POST'])
