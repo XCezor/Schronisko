@@ -9,6 +9,7 @@ from wtforms.validators import DataRequired, EqualTo, Length
 from flask_ckeditor import CKEditor
 from flask_ckeditor import CKEditorField
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 import bleach
 from bs4 import BeautifulSoup
 from datetime import datetime
@@ -18,18 +19,32 @@ ckeditor = CKEditor(app)
 app.config['SECRET_KEY'] = "Ad0ptujPs4LubK0t4"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://application:Ad0ptujPs4LubK0t4@localhost/schronisko'
 
+# Login Manager
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Users.query.get(int(user_id))
+
 # Baza danych
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-class Users(db.Model):
+class Users(db.Model, UserMixin):
     user_id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), nullable=False, unique=True)
     name = db.Column(db.String(100), nullable=False)
     surname = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), nullable=False)
     add_date = db.Column(db.DateTime, nullable=False, default=datetime.now)
     password_hash = db.Column(db.Text, nullable=False)
+
+    def get_id(self):
+        return str(self.user_id)
 
     @property
     def password(self):
@@ -79,13 +94,14 @@ class PostForm(FlaskForm):
 class UserForm(FlaskForm):
     name = StringField("Imię", validators=[DataRequired()])
     surname = StringField("Nazwisko", validators=[DataRequired()])
+    username = StringField("Nazwa użytkownika", validators=[DataRequired()])
     email = EmailField("Email", validators=[DataRequired()])
     password_hash = PasswordField("Hasło", validators=[DataRequired(), EqualTo('password_hash2', message='Podane hasła muszą być te same.')])
     password_hash2 = PasswordField("Potwierdź hasło", validators=[DataRequired()])
     submit = SubmitField("Utwórz")  
 
-class LoggingForm(FlaskForm):
-    login = StringField("Login", validators=[DataRequired()])
+class LoginForm(FlaskForm):
+    username = StringField("Login", validators=[DataRequired()])
     password = PasswordField("Hasło", validators=[DataRequired()])
     submit = SubmitField("Zaloguj")  
 
@@ -210,9 +226,34 @@ def delete_post(id):
 
 # Logowanie
 @app.route("/logowanie", methods=['GET', 'POST'])
-def logging():
-    form = LoggingForm()
-    return render_template("logging.html", form=form)
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = Users.query.filter_by(username=form.username.data).first()
+        if user:
+            if check_password_hash(user.password_hash, form.password.data):
+                login_user(user)
+                flash("Zalogowano.")
+                return redirect(url_for('dashboard'))
+            else:
+                flash("Nieprawidłowe hasło. Spróbuj ponownie.")
+        else:
+            flash("Nieprawidłowa nazwa użytkownika. Spróbuj ponownie.")
+    return render_template("login.html", form=form)
+
+# Wylogowywanie
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    flash("Zostałeś wylogowany.")
+    return redirect(url_for('login'))
+
+# Dashboard
+@app.route("/dashboard")
+@login_required
+def dashboard():
+    return render_template("dashboard.html")
 
 # Tworzenie konta
 @app.route("/utworz-konto", methods=['GET', 'POST'])
@@ -224,16 +265,18 @@ def create_user():
         if user is None:
             hashed_password = generate_password_hash(form.password_hash.data)
             user = Users(
-                name=form.name.data,
-                surname=form.surname.data,
-                email=form.email.data,
-                password_hash=hashed_password
+                name = form.name.data,
+                surname = form.surname.data,
+                username = form.username.data,
+                email = form.email.data,
+                password_hash = hashed_password
                 )
             db.session.add(user)
             db.session.commit()
 
         form.name.data = ''
         form.surname.data = ''
+        form.username.data = ''
         form.email.data = ''
         form.password_hash.data = ''
         form.password_hash2.data = ''
