@@ -95,6 +95,12 @@
             </ol>
         </div> -->
         <div id="content">
+            {% for message in get_flashed_messages() %}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
             {% block body %}{% endblock %}
         </div>
         <div id="footer">
@@ -140,7 +146,7 @@
         }
     </script> -->
 
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
 
     <script src="{{ url_for('static', filename='java-script/jquery-3.7.1.min.js') }}"></script>
 
