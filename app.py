@@ -83,6 +83,12 @@ class Posts(db.Model):
     last_edit_datetime = db.Column(db.DateTime, default=None)
     is_deleted = db.Column(db.Boolean, server_default="false")
 
+class Pages(db.Model):
+    page_id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    last_edit_datetime = db.Column(db.DateTime, default=None)
+
 # Formularze
 
 class PostForm(FlaskForm):
@@ -103,7 +109,12 @@ class UserForm(FlaskForm):
 class LoginForm(FlaskForm):
     username = StringField("Login", validators=[DataRequired()])
     password = PasswordField("Hasło", validators=[DataRequired()])
-    submit = SubmitField("Zaloguj")  
+    submit = SubmitField("Zaloguj")
+
+class PagesForm(FlaskForm):
+    title = StringField("Tytuł", validators=[DataRequired()])
+    description = CKEditorField("Opis", validators=[DataRequired()])
+    submit = SubmitField("Zapisz")
 
 # Strona główna
 
@@ -239,6 +250,44 @@ def delete_post(id):
     flash("Usunięto post.")
 
     return redirect(url_for('posts'))
+
+# Kontakt - podglad tresci
+@app.route("/kontakt")
+def contact():
+    contact = Pages.query.get_or_404(1)
+    return render_template("contact.html", contact=contact)
+
+# Kontakt, info - edycja tresci
+@app.route("/kontakt/edycja", methods=['GET', 'POST'])
+def edit_contact():
+
+    entry = Pages.query.get(1)
+
+    if entry is None:
+        init_contact = Pages()
+        init_contact.page_id = 1
+        init_contact.title = 'Kontakt'
+        init_contact.description = ''
+        db.session.add(init_contact)
+        db.session.commit()
+        entry = Pages.query.get(1)
+
+    form = PagesForm(obj=entry)
+
+    if form.validate_on_submit():
+
+        entry.title = 'Kontakt'
+        entry.description = form.description.data
+
+        db.session.add(entry)
+        db.session.commit()
+        flash("Zapisano zmiany!")
+
+        return redirect(url_for('contact'))     
+    
+    form.description.data = entry.description    
+
+    return render_template('edit_contact.html', form=form)
 
 # Logowanie
 @app.route("/logowanie", methods=['GET', 'POST'])
