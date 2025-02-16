@@ -63,10 +63,14 @@ class Pets(db.Model):
     name = db.Column(db.String(30))
     breed = db.Column(db.String(30))
     age = db.Column(db.Integer)
+    sex = db.Column(db.String(6), nullable=False)
+    weight = db.Column(db.Integer)
+    number = db.Column(db.String(15))
+    box = db.Column(db.String(20))
     description = db.Column(db.Text)
-    date_add = db.Column(db.TIMESTAMP, default=datetime.utcnow)
-    date_on = db.Column(db.TIMESTAMP, default=datetime.utcnow)
-    date_off = db.Column(db.TIMESTAMP, default=datetime.utcnow)
+    date_add = db.Column(db.TIMESTAMP, default=datetime.now)
+    date_on = db.Column(db.TIMESTAMP, default=datetime.now)
+    date_off = db.Column(db.TIMESTAMP, default=datetime.now)
 
     type = db.relationship('Types', backref='pets', lazy=True)
 
@@ -239,6 +243,23 @@ def delete_post(id):
     flash("Usunięto post.")
 
     return redirect(url_for('posts'))
+
+# Zwierzęta
+@app.route("/zwierzeta")
+def animals():
+    return render_template("animals.html")
+
+@app.route("/zwierzeta/znalezione")
+def found():
+    return render_template("found.html")
+
+@app.route("/zwierzeta/do-adopcji")
+def to_adoption():
+    return render_template("to_adotion.html")
+
+@app.route("/zwierzeta/znalazly-dom")
+def found_home():
+    return render_template("found_home.html")
 
 # Logowanie
 @app.route("/logowanie", methods=['GET', 'POST'])
