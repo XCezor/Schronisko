@@ -260,7 +260,8 @@ def delete_post(id):
 # Zwierzęta
 @app.route("/zwierzeta")
 def animals():
-    return render_template("animals.html")
+    animals = db.session.query(Animals.name, Animals.age, Types.name.label("type"), Animals.number, Animals.box, Animals.description).join(Types, Types.type_id == Animals.type_id).all()
+    return render_template("animals.html", animals=animals)
 
 @app.route("/zwierzeta/znalezione")
 def found():

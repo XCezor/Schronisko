@@ -3,5 +3,27 @@
 {% block body %}
 <h1>Zwierzęta</h1>
 
+<table>
+    <tr>
+        <th>Imię</th>
+        <th>Wiek</th>
+        <th>Gatunek</th>
+        <th>Numer</th>
+        <th>Box</th>
+        <th>Opis</th>
+    </tr>
+    {% for animal in animals %}
+    <tr>
+        <td>{{ animal.name }}</td>
+        <td>{{ animal.age }}</td>
+        <td>{{ animal.type }}</td>
+        <td>{{ animal.number }}</td>
+        <td>{{ animal.box }}</td>
+        <td>{{ animal.description }}</td>
+
+    </tr>
+    {% endfor %}
+</table>
+
 <a href="{{ url_for('add_animal') }}">Dodaj zwierzę</a>
 {% endblock %}
