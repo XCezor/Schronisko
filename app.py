@@ -4,8 +4,8 @@ from sqlalchemy import text
 from flask_migrate import Migrate
 import psycopg2
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, EmailField, BooleanField, ValidationError
-from wtforms.validators import DataRequired, EqualTo, Length
+from wtforms import StringField, SubmitField, PasswordField, EmailField, BooleanField, ValidationError, SelectField, IntegerField
+from wtforms.validators import DataRequired, EqualTo, Length, Optional
 from flask_ckeditor import CKEditor
 from flask_ckeditor import CKEditorField
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -57,11 +57,12 @@ class Users(db.Model, UserMixin):
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-class Pets(db.Model):
-    pet_id = db.Column(db.Integer, primary_key=True)
+class Animals(db.Model):
+    animal_id = db.Column(db.Integer, primary_key=True)
     type_id = db.Column(db.Integer, db.ForeignKey('types.type_id')) 
     name = db.Column(db.String(30))
     breed = db.Column(db.String(30))
+    date_of_birth = db.Column(db.TIMESTAMP)
     age = db.Column(db.Integer)
     sex = db.Column(db.String(6), nullable=False)
     weight = db.Column(db.Integer)
@@ -70,9 +71,9 @@ class Pets(db.Model):
     description = db.Column(db.Text)
     date_add = db.Column(db.TIMESTAMP, default=datetime.now)
     date_on = db.Column(db.TIMESTAMP, default=datetime.now)
-    date_off = db.Column(db.TIMESTAMP, default=datetime.now)
+    date_off = db.Column(db.TIMESTAMP)
 
-    type = db.relationship('Types', backref='pets', lazy=True)
+    type = db.relationship('Types', backref='animals', lazy=True)
 
 class Types(db.Model):
     type_id = db.Column(db.Integer, primary_key=True) 
@@ -108,6 +109,18 @@ class LoginForm(FlaskForm):
     username = StringField("Login", validators=[DataRequired()])
     password = PasswordField("Hasło", validators=[DataRequired()])
     submit = SubmitField("Zaloguj")  
+
+class AnimalForm(FlaskForm):
+    name = StringField("Imię", validators=[Optional()])
+    type = SelectField("Rodzaj", choices=[], validators=[DataRequired()])
+    breed = StringField("Rasa", validators=[Optional()])
+    sex = SelectField("Płeć", choices=[('samiec','samiec'), ('samica','samica')], validators=[DataRequired()])
+    age = IntegerField("Wiek", validators=[Optional()])
+    weight = IntegerField("Waga (kg)", validators=[Optional()])
+    number = StringField("Numer", validators=[DataRequired()])
+    box = StringField("Boks", validators=[DataRequired()])
+    description = CKEditorField("Opis", validators=[DataRequired()])
+    submit = SubmitField("Dodaj") 
 
 # Strona główna
 
@@ -261,6 +274,36 @@ def to_adoption():
 def found_home():
     return render_template("found_home.html")
 
+@app.route("/zwierzeta/dodaj-zwierze", methods=['GET', 'POST'])
+def add_animal():
+    form = AnimalForm()
+
+    types = Types.query.all()
+    type_choices = []
+    for type in types:
+        type_choices.append((type.type_id, type.name))
+    form.type.choices = type_choices
+    
+    if form.validate_on_submit():
+        new_animal = Animals(
+            name = form.name.data,
+            type_id = form.type.data, 
+            breed = form.breed.data,
+            sex = form.sex.data,
+            age = form.age.data,
+            weight = form.weight.data,
+            number = form.number.data,
+            box = form.box.data,
+            description = form.description.data
+            )
+        db.session.add(new_animal)
+        db.session.commit()
+        flash("Dodano zwierzę.")
+
+        return redirect("/zwierzeta")
+
+    return render_template("add_animal.html", form=form)
+
 # Logowanie
 @app.route("/logowanie", methods=['GET', 'POST'])
 def login():
@@ -347,31 +390,7 @@ def create_user():
     return render_template("create_user.html", form=form)
 
 
-# ????
-
-@app.route("/pets")
-def pets():    
-    pets = db.session.query(Pets.name, Pets.age, Types.name.label("type"), Pets.description).join(Types, Types.type_id == Pets.type_id).all()
-
-    return render_template("index.html", animals=pets)
-
-@app.route('/add', methods=['GET', 'POST'])
-def add_animal():
-    if request.method == 'POST':
-        new_animal = Pets(name=request.form['name'], age=request.form['age'], type_id=request.form['type_id'], description=request.form['description'])
-        db.session.add(new_animal)
-        db.session.commit()
-
-        return redirect("/")
-
-    pets = Pets.query.all()
-    return render_template("add.html", animals=pets)
-
-
-    
-
-
-
+# Błędy 404 i 500
 
 @app.errorhandler(404)
 def page_not_found(e):
