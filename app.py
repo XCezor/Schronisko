@@ -201,13 +201,13 @@ def posts():
             post.description = post.description[0:-4] + " ...</p>"
         
         post.description = bleach.clean(post.description, tags={'p','strong','em','s'}, strip=True)
-    return render_template("posts.html", posts=posts)
+    return render_template("posts/posts.html", posts=posts)
 
 # Wyświetlenie szczegółów posta
 @app.route("/aktualnosci/<int:id>")
 def post(id):
     post = Posts.query.get_or_404(id)
-    return render_template("post.html", post=post)
+    return render_template("posts/post.html", post=post)
 
 # Dodawanie nowego posta
 @app.route("/aktualnosci/dodaj-post", methods=['GET', 'POST'])
@@ -228,7 +228,7 @@ def add_post():
         db.session.commit()
         flash("Dodano post!")
 
-    return render_template("add_post.html", form=form)
+    return render_template("posts/add_post.html", form=form)
 
 # Edycja posta
 @app.route("/aktualnosci/edytuj-post/<int:id>", methods=['GET', 'POST'])
@@ -256,7 +256,7 @@ def edit_post(id):
     form.title.data = post.title
     form.author.data = post.author
     form.description.data = post.description
-    return render_template('edit_post.html', form=form)
+    return render_template('posts/edit_post.html', form=form)
 
 # Usuwanie posta
 @app.route("/aktualnosci/usuwanie-posta/<int:id>")
@@ -283,12 +283,12 @@ def animals():
         Animals.box,
         ).join(Types, Types.type_id == Animals.type_id).all()
     
-    return render_template("animals.html", animals=animals)
+    return render_template("animals/animals.html", animals=animals)
 
 @app.route("/zwierzeta/<int:id>")
 def animal(id):
     animal = Animals.query.get_or_404(id)
-    return render_template("animal.html", animal=animal)
+    return render_template("animals/animal.html", animal=animal)
 
 @app.route("/zwierzeta/znalezione")
 def found():
@@ -304,7 +304,7 @@ def found():
         Animals.category == 'znalezione',
         Animals.in_shelter == True
     ).all()
-    return render_template("found.html", animals=animals)
+    return render_template("animals/found.html", animals=animals)
 
 @app.route("/zwierzeta/do-adopcji")
 def to_adoption():
@@ -321,7 +321,7 @@ def to_adoption():
         Animals.category == 'adopcja',
         Animals.in_shelter == True
     ).all()
-    return render_template("to_adoption.html", animals=animals)
+    return render_template("animals/to_adoption.html", animals=animals)
 
 @app.route("/zwierzeta/znalazly-dom")
 def found_home():
@@ -337,7 +337,7 @@ def found_home():
     ).filter(
         Animals.in_shelter == False
     ).all()
-    return render_template("found_home.html", animals=animals)
+    return render_template("animals/found_home.html", animals=animals)
 
 @app.route("/zwierzeta/dodaj-zwierze", methods=['GET', 'POST'])
 def add_animal():
@@ -369,13 +369,13 @@ def add_animal():
 
         return redirect(url_for('add_animal'))
 
-    return render_template("add_animal.html", form=form)
+    return render_template("animals/add_animal.html", form=form)
 
 # Kontakt - podglad tresci
 @app.route("/kontakt")
 def contact():
     contact = Pages.query.get_or_404(1)
-    return render_template("contact.html", contact=contact)
+    return render_template("contact/contact.html", contact=contact)
 
 # Kontakt, info - edycja tresci
 @app.route("/kontakt/edycja", methods=['GET', 'POST'])
@@ -407,7 +407,7 @@ def edit_contact():
     
     form.description.data = entry.description    
 
-    return render_template('edit_contact.html', form=form)
+    return render_template('contact/edit_contact.html', form=form)
 
 
 # Logowanie
@@ -425,7 +425,7 @@ def login():
                 flash("Nieprawidłowe hasło. Spróbuj ponownie.")
         else:
             flash("Nieprawidłowa nazwa użytkownika. Spróbuj ponownie.")
-    return render_template("login.html", form=form)
+    return render_template("login/login.html", form=form)
 
 # Wylogowywanie
 @app.route("/logout")
@@ -456,14 +456,14 @@ def dashboard():
             flash("Zapisano zmiany.")
         except:
             flash("Nie można zapisać zmian.")
-        return render_template("dashboard.html", form=form, user_to_update=user_to_update)
+        return render_template("login/dashboard.html", form=form, user_to_update=user_to_update)
 
     form.username.data = user_to_update.username
     form.name.data = user_to_update.name
     form.surname.data = user_to_update.surname
     form.email.data = user_to_update.email
     
-    return render_template("dashboard.html", form=form)
+    return render_template("login/dashboard.html", form=form)
 
 # Tworzenie konta
 @app.route("/utworz-konto", methods=['GET', 'POST'])
@@ -492,16 +492,16 @@ def create_user():
         form.password_hash2.data = ''
 
         flash("Utworzono konto.")
-        return render_template("create_user.html", form=form)
-    return render_template("create_user.html", form=form)
+        return render_template("login/create_user.html", form=form)
+    return render_template("login/create_user.html", form=form)
 
 
 # Błędy 404 i 500
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template("404.html"), 404
+    return render_template("errors/404.html"), 404
 
 @app.errorhandler(500)
 def page_not_found(e):
-    return render_template("500.html"), 500
+    return render_template("errors/500.html"), 500
