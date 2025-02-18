@@ -270,41 +270,63 @@ def animals():
         Types.name.label("type"),
         Animals.number,
         Animals.box,
-        Animals.description
         ).join(Types, Types.type_id == Animals.type_id).all()
     
     return render_template("animals.html", animals=animals)
 
+@app.route("/zwierzeta/<int:id>")
+def animal(id):
+    animal = Animals.query.get_or_404(id)
+    return render_template("animal.html", animal=animal)
+
 @app.route("/zwierzeta/znalezione")
 def found():
     animals = db.session.query(
-        Animals.category, 
-        Types.name.label("type"),
+        Animals.animal_id,
+        Animals.sex,
+        Animals.breed,
+        Animals.age,
+        Animals.weight,
         Animals.number,
         Animals.box,
-        Animals.description
-        ).join(Types, Types.type_id == Animals.type_id).where(Animals.category == 'znalezione').all()
+    ).filter(
+        Animals.category == 'znalezione',
+        Animals.in_shelter == True
+    ).all()
     return render_template("found.html", animals=animals)
 
 @app.route("/zwierzeta/do-adopcji")
 def to_adoption():
     animals = db.session.query(
-        Animals.category, 
+        Animals.animal_id,
         Animals.name,
         Animals.breed,
         Animals.sex,
         Animals.age,
         Animals.weight,
-        Types.name.label("type"),
         Animals.number,
         Animals.box,
-        Animals.description
-        ).join(Types, Types.type_id == Animals.type_id).where(Animals.category == 'adopcja').all()
+    ).filter(
+        Animals.category == 'adopcja',
+        Animals.in_shelter == True
+    ).all()
     return render_template("to_adoption.html", animals=animals)
 
 @app.route("/zwierzeta/znalazly-dom")
 def found_home():
-    return render_template("found_home.html")
+    animals = db.session.query(
+        Animals.animal_id,
+        Animals.name,
+        Animals.breed,
+        Animals.sex,
+        Animals.age,
+        Animals.weight,
+        Animals.number,
+        Animals.box,
+    ).filter(
+        Animals.in_shelter == False
+    ).all()
+    return render_template("found_home.html", animals=animals)
 
 @app.route("/zwierzeta/dodaj-zwierze", methods=['GET', 'POST'])
 def add_animal():
