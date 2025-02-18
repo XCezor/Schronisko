@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/info.css') }}">
+{% endblock %}
+
+{% block body %}
+
+<h1>Informacje</h1>
+
+{% for page in pages %}
+
+    {% if page.page_id != 1 %}
+
+        <div class="info-box">
+
+            <h2>{{ page.title }}</h2>
+            <p> {{ page.description|safe }} </p>
+            <a href="{{ url_for('page', id=page.page_id) }}">Więcej</a>
+            
+        </div>
+
+    {% endif %}
+
+{% endfor %}
+
+<a href="/info/dodaj-info">Dodaj post</a>
+
+{% endblock %}
