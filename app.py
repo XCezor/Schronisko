@@ -60,6 +60,8 @@ class Users(db.Model, UserMixin):
 class Animals(db.Model):
     animal_id = db.Column(db.Integer, primary_key=True)
     type_id = db.Column(db.Integer, db.ForeignKey('types.type_id')) 
+    category = db.Column(db.String(10), nullable=False)
+    in_shelter = db.Column(db.Boolean, nullable=False, server_default="true")
     name = db.Column(db.String(30))
     breed = db.Column(db.String(30))
     date_of_birth = db.Column(db.TIMESTAMP)
@@ -73,7 +75,7 @@ class Animals(db.Model):
     date_on = db.Column(db.TIMESTAMP, default=datetime.now)
     date_off = db.Column(db.TIMESTAMP)
 
-    type = db.relationship('Types', backref='animals', lazy=True)
+    type = db.relationship('Types', backref='Animals', lazy=True)
 
 class Types(db.Model):
     type_id = db.Column(db.Integer, primary_key=True) 
@@ -111,8 +113,9 @@ class LoginForm(FlaskForm):
     submit = SubmitField("Zaloguj")  
 
 class AnimalForm(FlaskForm):
+    category = SelectField("Kategoria", choices=[('adopcja','adopcja'), ('znalezione','znalezione')], validators=[DataRequired()])
     name = StringField("Imię", validators=[Optional()])
-    type = SelectField("Rodzaj", choices=[], validators=[DataRequired()])
+    type = SelectField("Gatunek", choices=[], validators=[DataRequired()])
     breed = StringField("Rasa", validators=[Optional()])
     sex = SelectField("Płeć", choices=[('samiec','samiec'), ('samica','samica')], validators=[DataRequired()])
     age = IntegerField("Wiek", validators=[Optional()])
@@ -260,16 +263,44 @@ def delete_post(id):
 # Zwierzęta
 @app.route("/zwierzeta")
 def animals():
-    animals = db.session.query(Animals.name, Animals.age, Types.name.label("type"), Animals.number, Animals.box, Animals.description).join(Types, Types.type_id == Animals.type_id).all()
+    animals = db.session.query(
+        Animals.category, 
+        Animals.name, 
+        Animals.age, 
+        Types.name.label("type"),
+        Animals.number,
+        Animals.box,
+        Animals.description
+        ).join(Types, Types.type_id == Animals.type_id).all()
+    
     return render_template("animals.html", animals=animals)
 
 @app.route("/zwierzeta/znalezione")
 def found():
-    return render_template("found.html")
+    animals = db.session.query(
+        Animals.category, 
+        Types.name.label("type"),
+        Animals.number,
+        Animals.box,
+        Animals.description
+        ).join(Types, Types.type_id == Animals.type_id).where(Animals.category == 'znalezione').all()
+    return render_template("found.html", animals=animals)
 
 @app.route("/zwierzeta/do-adopcji")
 def to_adoption():
-    return render_template("to_adotion.html")
+    animals = db.session.query(
+        Animals.category, 
+        Animals.name,
+        Animals.breed,
+        Animals.sex,
+        Animals.age,
+        Animals.weight,
+        Types.name.label("type"),
+        Animals.number,
+        Animals.box,
+        Animals.description
+        ).join(Types, Types.type_id == Animals.type_id).where(Animals.category == 'adopcja').all()
+    return render_template("to_adoption.html", animals=animals)
 
 @app.route("/zwierzeta/znalazly-dom")
 def found_home():
@@ -287,6 +318,8 @@ def add_animal():
     
     if form.validate_on_submit():
         new_animal = Animals(
+            category = form.category.data,
+            in_shelter = True,
             name = form.name.data,
             type_id = form.type.data, 
             breed = form.breed.data,
@@ -301,7 +334,7 @@ def add_animal():
         db.session.commit()
         flash("Dodano zwierzę.")
 
-        return redirect("/zwierzeta")
+        return redirect(url_for('add_animal'))
 
     return render_template("add_animal.html", form=form)
 

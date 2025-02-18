@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<h1>Zwierzęta</h1>
+<h1>Ostatnio znalezione</h1>
 
 <table>
     <tr>
@@ -27,10 +27,5 @@
     {% endfor %}
 </table>
 
-<br/>
-<a href="{{ url_for('found') }}">Ostatnio znalezione</a>
-<br/>
-<a href="{{ url_for('to_adoption') }}">Do adopcji</a>
-<br/><br/>
-<a href="{{ url_for('add_animal') }}">Dodaj zwierzę</a>
+<a href="{{ url_for('animals') }}">Wróć</a>
 {% endblock %}

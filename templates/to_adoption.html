@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/animals.css') }}">
+{% endblock %}
+
+{% block body %}
+<h1>Do adopcji</h1>
+
+<div class="animal-boxes-module">
+{% for animal in animals %}
+<div class="animal-box">
+    <div class="animal-box-img">
+        
+    </div>
+    <div class="animal-box-description">
+        <h3>{{ animal.name }}</h3>
+        {{ animal.number }}<br/>
+        {{ animal.breed }}<br/>
+        {{ animal.sex }}, {{ animal.age }} lat, {{ animal.weight }} kg<br/>
+        {{ animal.box }}<br/>
+    </div>
+</div>
+{% endfor %}
+</div>
+
+<br/><br/><br/>
+
+<!-- <table>
+    <tr>
+        <th>Kategoria</th>
+        <th>Imię</th>
+        <th>Wiek</th>
+        <th>Gatunek</th>
+        <th>Numer</th>
+        <th>Box</th>
+        <th>Opis</th>
+    </tr>
+    {% for animal in animals %}
+    <tr>
+        <td>{{ animal.category }}</td>
+        <td>{{ animal.name }}</td>
+        <td>{{ animal.age }}</td>
+        <td>{{ animal.type }}</td>
+        <td>{{ animal.number }}</td>
+        <td>{{ animal.box }}</td>
+        <td>{{ animal.description }}</td>
+
+    </tr>
+    {% endfor %}
+</table> -->
+
+<a href="{{ url_for('animals') }}">Wróć</a>
+{% endblock %}
