@@ -1,4 +1,4 @@
 # Ignorowanie katalogów:
 /__pycache__/
 /env/
-/migrations/
+# /migrations/
