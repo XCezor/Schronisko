@@ -45,7 +45,7 @@ GRANT ALL PRIVILEGES ON SCHEMA public TO application;
 
 - Następnie wpisz `pip install -r requirements.txt`, aby pobrać wszystkie potrzebne biblioteki.
 
-- Aby utworzyć tabele w bazie danych wpisz w terminalu `flask db upgrade` (jeśli tabele się nie utworzą wpisz `flask db migrate -m 'init tables'` i `flask db upgrade`).
+- Aby utworzyć tabele w bazie danych, trzeba najpierw zainicjować migracje bazy. Wpisz w terminalu `flask db init`, by zainicjować migracje. Następnie wpisz `flask db migrate -m 'init tables'` i `flask db upgrade`. Te 2 ostatnie polecenia utworzą brakujące tabele w Twojej bazie `schronisko`.
 
 - Wyjdź z env poleceniem `deactivate`.
 
@@ -84,6 +84,10 @@ GRANT ALL PRIVILEGES ON SCHEMA public TO application;
 `FLASK_APP=app.py flask run` - uruchomienie app.py (uruchomienie strony)
 
 `CTRL+C` - by wyłączyć flaska
+
+`flask db init` - zainicjalizowanie migracji bazy (tylko raz, na początku)
+
+`flask db migrate -m 'nazwa commitu/migracji'` oraz `flask db upgrade` - by dodać brakujące elementy w bazie (na podstawie klas utworzonych w models.py)
 
 ### W pasku wyszukiwania:
 
