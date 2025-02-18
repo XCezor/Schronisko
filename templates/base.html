@@ -29,7 +29,7 @@
         </div>
         <nav class="navbar">
             <ul class="nav-links">
-                <li><a href="{{url_for('posts') }}">Aktualności</a></li>
+                <li><a href="{{ url_for('posts') }}">Aktualności</a></li>
                 <li>
                     <a href="{{url_for('animals') }}">Zwierzęta</a>
                     <ul>
@@ -46,7 +46,7 @@
                         <li><a href="#">Częste pytania</a></li>
                     </ul>
                 </li>
-                <li><a href="#">Kontakt</a></li>
+                <li><a href="{{ url_for('contact') }}">Kontakt</a></li>
                 {% if current_user.is_authenticated %}
                 <li><a href="{{ url_for('dashboard') }}">Moje konto</a></li>
                 <li><a href="{{ url_for('logout') }}">Wyloguj</a></li>
