@@ -193,9 +193,14 @@ def animal(id):
     animal = Animals.query.get_or_404(id)
 
     path = app.config['UPLOAD_FOLDER'] + 'animals/' + str(id) + '/' 
-    all_files = os.listdir(path)
-    images = [img for img in all_files if os.path.isfile(os.path.join(path, img))]
-    
+    is_dir = os.path.isdir(path)
+
+    if is_dir:
+        all_files = os.listdir(path)
+        images = [img for img in all_files if os.path.isfile(os.path.join(path, img))]
+    else:
+        images=None
+
     return render_template("animals/animal.html", animal=animal, images=images)
 
 @app.route("/zwierzeta/znalezione")
@@ -459,24 +464,3 @@ def page_not_found(e):
 @app.errorhandler(500)
 def page_not_found(e):
     return render_template("errors/500.html"), 500
-
-
-# @app.route("/upload-image", methods=['GET', 'POST'])
-# def upload_image():
-#     form = ImageForm()
-
-#     if form.validate_on_submit():
-#         files_filenames = []
-#         for file in form.files.data:
-#             safe_filename = secure_filename(file.filename)
-#             img_name = str(uuid.uuid1()) + "_" + safe_filename
-
-#             file_path = os.path.join(app.config['UPLOAD_FOLDER'], 'posts', '1', img_name)
-#             catalog_path = os.path.join(app.config['UPLOAD_FOLDER'], 'posts', '1')
-
-#             os.makedirs(catalog_path, exist_ok=True)
-            
-#             file.save(file_path)
-#             files_filenames.append(img_name)
-#         return render_template("upload_image.html", form=form, files_filenames=files_filenames)
-#     return render_template("upload_image.html", form=form)
