@@ -1,26 +1,39 @@
 {% extends 'base.html' %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/animals.css') }}">
+{% endblock %}
+
 {% block body %}
-<h1>{{ animal.name }}</h1>
 
-<table>
-    <tr>
-        <th>Kategoria</th>
-        <th>Wiek</th>
-        <th>Gatunek</th>
-        <th>Numer</th>
-        <th>Box</th>
-        <th>Opis</th>
-    </tr>
-    <tr>
-        <td>{{ animal.category }}</td>
-        <td>{{ animal.age }}</td>
-        <td>{{ animal.type }}</td>
-        <td>{{ animal.number }}</td>
-        <td>{{ animal.box }}</td>
-        <td>{{ animal.description }}</td>
+{% if animal.name %}
+    <h1>{{ animal.name }}</h1>
+    <h3 style="color: gray;">{{ animal.number }}</h3>
+{% else %}
+    <h1>{{ animal.number }}</h1>
+{% endif %}
 
-    </tr>
-</table>
+<strong>Kategoria: </strong>{{ animal.category }}<br/>
+<strong>Rasa: </strong>{{ animal.breed }}<br/>
+<strong>Płeć: </strong>{{ animal.sex }}<br/>
+<strong>Data urodzenia: </strong>{{ animal.date_of_birth }}<br/>
+<strong>Wiek: </strong>{{ animal.age }}<br/>
+<strong>Waga: </strong>{{ animal.weight }} kg<br/>
+<strong>Numer: </strong>{{ animal.number }}<br/>
+<strong>Boks: </strong>{{ animal.box }}<br/>
+<p>{{ animal.description }}</p><br/>
+
+
+<div class="images-gallery">
+    {% if images %}
+        {% for img in images %}
+            <div class="images-gallery-img">
+                <img src="{{ url_for('static', filename='uploads/animals/' + animal.animal_id |string + '/' + img) }}" alt="Zdjęcie"/>
+            </div>
+        {% endfor%}
+    {% else %}
+        Brak zdjęć.
+    {% endif %}
+</div>
 
 {% endblock %}

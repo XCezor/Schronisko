@@ -2,7 +2,7 @@
 
 {% block body %}
 <h1>Dodaj zwierzę</h1>
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
 
     {{ form.category.label }}
@@ -33,7 +33,13 @@
     {{ form.box }}
     <br/>
     {{ form.description.label }}
-    {{ form.description() }}
+    {{ form.description }}
+    <br/>
+    {{ form.title_img.label }}
+    {{ form.title_img }}
+    <br/>
+    {{ form.images.label }}
+    {{ form.images }}
     <br/>
     {{ form.submit() }}
 </form>

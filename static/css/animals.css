@@ -27,6 +27,13 @@
     background-color: white;
 }
 
+.animal-box-img img
+{
+    width: 100%;
+    height: 100%;
+    border-radius: 2vw;
+}
+
 .animal-box-description
 {
     padding: 10px;
@@ -34,4 +41,28 @@
     font-weight: 600;
     text-align: left;
     color: white;
+}
+
+
+.images-gallery
+{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 300px);
+    gap: 10px;
+    justify-content: left;
+}
+
+.images-gallery-img
+{
+    width: 300px;
+    height: 200px;
+    padding: 1vw;
+    background-color: rgba(70, 72, 114, 1);
+    border-radius: 2vw;
+}
+
+.images-gallery-img img
+{
+    width: 100%;
+    height: 100%;
 }
