@@ -1,14 +1,18 @@
 {% extends 'base.html' %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/animals.css') }}">
+{% endblock %}
+
 {% block body %}
 <h1>Zwierzęta</h1>
 
 <br/>
-<a href="{{ url_for('found') }}">Ostatnio znalezione</a>
-<br/>
-<a href="{{ url_for('to_adoption') }}">Do adopcji</a>
-<br/>
-<a href="{{ url_for('found_home') }}">Znalazły dom</a>
-<br/><br/>
-<a href="{{ url_for('add_animal') }}">Dodaj zwierzę</a>
+<div class="animals-grid">
+    <a href="{{ url_for('found') }}">Ostatnio znalezione</a>
+    <a href="{{ url_for('to_adoption') }}">Do adopcji</a>
+    <a href="{{ url_for('found_home') }}">Znalazły dom</a>
+    <a href="{{ url_for('add_animal') }}">Dodaj zwierzę</a>
+</div>
+
 {% endblock %}
