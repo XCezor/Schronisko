@@ -41,6 +41,7 @@ class Animals(db.Model):
     number = db.Column(db.String(15))
     box = db.Column(db.String(20))
     description = db.Column(db.Text)
+    title_img_name = db.Column(db.String(255))
     date_add = db.Column(db.TIMESTAMP, default=datetime.now)
     date_on = db.Column(db.TIMESTAMP, default=datetime.now)
     date_off = db.Column(db.TIMESTAMP)
