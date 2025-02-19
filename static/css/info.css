@@ -22,6 +22,7 @@
 
 .info-box a:hover {
     background-color: rgba(255, 255, 255, 0.4);
+    transform: scale(1.1); 
 }
 
 .misc-info {
@@ -42,4 +43,5 @@
 .misc-info:hover {
     background-color: rgba(70, 72, 114, 1);
     color:white;
+    transform: scale(1.1); 
 }
