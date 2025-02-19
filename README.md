@@ -4,43 +4,26 @@
 
 ### Baza danych PostgreSQL:
 
-- baza o nazwie `html` (nazwa tymczasowa!)
+- baza o nazwie `schronisko`
 
 ```sql
-CREATE DATABASE html;
-
-\c html
+CREATE DATABASE schronisko;
 ```
 
-- tabele `pets` i `types` 
+- należy przełączyć się na bazę `schronisko` [WAŻNE!!]
 
-```sql
-CREATE TABLE types (
-    type_id SERIAL PRIMARY KEY,
-    name VARCHAR(50)
-);
-
-CREATE TABLE pets (
-    pet_id SERIAL PRIMARY KEY,
-    type_id INT REFERENCES types(type_id),
-    name VARCHAR(30),
-    breed VARCHAR(30),
-    age INT,
-    description VARCHAR(1000),
-    date_add TIMESTAMP DEFAULT TIMESTAMP,
-    date_on TIMESTAMP DEFAULT TIMESTAMP,
-    date_off TIMESTAMP DEFAULT TIMESTAMP
-);
+```
+\c schronisko
 ```
 
-- rola (użytkownik) `admin` z hasłem `admin` z uprawnieniami do bazy, tabel
+- rola (użytkownik) `application` z hasłem `Ad0ptujPs4LubK0t4` z uprawnieniami do bazy, schematu 'public'
 
 ```sql
-CREATE ROLE admin WITH LOGIN PASSWORD 'admin';
+CREATE ROLE application WITH LOGIN PASSWORD 'Ad0ptujPs4LubK0t4';
 
-GRANT ALL PRIVILEGES ON DATABASE html TO admin;
+GRANT ALL PRIVILEGES ON DATABASE schronisko TO application;
 
-GRANT ALL PRIVILEGES ON SCHEMA public TO admin;
+GRANT ALL PRIVILEGES ON SCHEMA public TO application;
 ```
 
 ### Virtual Environment:
@@ -60,7 +43,9 @@ GRANT ALL PRIVILEGES ON SCHEMA public TO admin;
 
 - Włącz env, wpisując `source env/bin/activate`.
 
-- Następnie wpisz `pip3 install flask flask-sqlalchemy` i `pip install psycopg2-binary`, by pobrać potrzebne biblioteki.
+- Następnie wpisz `pip install -r requirements.txt`, aby pobrać wszystkie potrzebne biblioteki.
+
+- Aby utworzyć tabele w bazie danych, trzeba najpierw zainicjować migracje bazy. Wpisz w terminalu `flask db init`, by zainicjować migracje. Następnie wpisz `flask db migrate -m 'init tables'` i `flask db upgrade`. Te 2 ostatnie polecenia utworzą brakujące tabele w Twojej bazie `schronisko`.
 
 - Wyjdź z env poleceniem `deactivate`.
 
@@ -98,9 +83,19 @@ GRANT ALL PRIVILEGES ON SCHEMA public TO admin;
 
 `FLASK_APP=app.py flask run` - uruchomienie app.py (uruchomienie strony)
 
-`CTRL+C` - by wyłączyć app.py
+`CTRL+C` - by wyłączyć flaska
+
+`flask db init` - zainicjalizowanie migracji bazy (tylko raz, na początku)
+
+`flask db migrate -m 'nazwa commitu/migracji'` oraz `flask db upgrade` - by dodać brakujące elementy w bazie (na podstawie klas utworzonych w models.py)
 
 ### W pasku wyszukiwania:
 
 `127.0.0.1:5000` lub `localhost:5000` - "domena"
  strony
+
+### Polecenia dla ekspertów: ;)
+
+`export FLASK_DEBUG=1` - włączenie trybu debugowania (serwer sam się zresetuje po zapisanych zmianach w plikach)
+
+`export FLASK_APP=app.py` - ustawienie zmiennej środowiskowej FLASK_APP na app.py, dzięki czemu nie trzeba pisać jej za każdym razem (do uruchomienia strony wystarczy napisać `flask run`)

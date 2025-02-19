@@ -1,14 +1,18 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 from flask_migrate import Migrate
 import psycopg2
+from flask_wtf import FlaskForm
+from wtforms import StringField, SubmitField, PasswordField, EmailField, BooleanField, ValidationError, SelectField, IntegerField
+from wtforms.validators import DataRequired, EqualTo, Length, Optional
 from flask_ckeditor import CKEditor
+from flask_ckeditor import CKEditorField
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 import bleach
 from bs4 import BeautifulSoup
 from datetime import datetime
-from webforms import PostForm, UserForm, LoginForm, PagesForm, AnimalForm
-
 
 app = Flask(__name__)
 ckeditor = CKEditor(app)
@@ -27,12 +31,112 @@ def load_user(user_id):
 
 # Baza danych
 
-from models import db, Users, Animals, Types, Posts, Pages
-
+db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+class Users(db.Model, UserMixin):
+    user_id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), nullable=False, unique=True)
+    name = db.Column(db.String(100), nullable=False)
+    surname = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    add_date = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    password_hash = db.Column(db.Text, nullable=False)
 
-#======================STRONA GLOWNA==========================
+    def get_id(self):
+        return str(self.user_id)
+
+    @property
+    def password(self):
+        raise AttributeError('Password is not a readable attribute.')
+    
+    @password.setter
+    def password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+class Animals(db.Model):
+    animal_id = db.Column(db.Integer, primary_key=True)
+    type_id = db.Column(db.Integer, db.ForeignKey('types.type_id')) 
+    category = db.Column(db.String(10), nullable=False)
+    in_shelter = db.Column(db.Boolean, nullable=False, server_default="true")
+    name = db.Column(db.String(30))
+    breed = db.Column(db.String(30))
+    date_of_birth = db.Column(db.TIMESTAMP)
+    age = db.Column(db.Integer)
+    sex = db.Column(db.String(6), nullable=False)
+    weight = db.Column(db.Integer)
+    number = db.Column(db.String(15))
+    box = db.Column(db.String(20))
+    description = db.Column(db.Text)
+    date_add = db.Column(db.TIMESTAMP, default=datetime.now)
+    date_on = db.Column(db.TIMESTAMP, default=datetime.now)
+    date_off = db.Column(db.TIMESTAMP)
+
+    type = db.relationship('Types', backref='Animals', lazy=True)
+
+class Types(db.Model):
+    type_id = db.Column(db.Integer, primary_key=True) 
+    name = db.Column(db.String(20))
+
+class Posts(db.Model):
+    post_id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    author = db.Column(db.String(50), server_default='Brak')
+    description = db.Column(db.Text, nullable=False)
+    post_datetime = db.Column(db.DateTime, default=datetime.utcnow)
+    last_edit_datetime = db.Column(db.DateTime, default=None)
+    is_deleted = db.Column(db.Boolean, server_default="false")
+
+class Pages(db.Model):
+    page_id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+    last_edit_datetime = db.Column(db.DateTime, default=None)
+
+# Formularze
+
+class PostForm(FlaskForm):
+    title = StringField("Tytuł", validators=[DataRequired()])
+    author = StringField("Autor (opcjonalne):")
+    description = CKEditorField("Opis", validators=[DataRequired()])
+    submit = SubmitField("Dodaj")
+
+class UserForm(FlaskForm):
+    name = StringField("Imię", validators=[DataRequired()])
+    surname = StringField("Nazwisko", validators=[DataRequired()])
+    username = StringField("Nazwa użytkownika", validators=[DataRequired()])
+    email = EmailField("Email", validators=[DataRequired()])
+    password_hash = PasswordField("Hasło", validators=[DataRequired(), EqualTo('password_hash2', message='Podane hasła muszą być te same.')])
+    password_hash2 = PasswordField("Potwierdź hasło", validators=[DataRequired()])
+    submit = SubmitField("Utwórz")  
+
+class LoginForm(FlaskForm):
+    username = StringField("Login", validators=[DataRequired()])
+    password = PasswordField("Hasło", validators=[DataRequired()])
+    submit = SubmitField("Zaloguj")
+
+class PagesForm(FlaskForm):
+    title = StringField("Tytuł", validators=[DataRequired()])
+    description = CKEditorField("Opis", validators=[DataRequired()])
+    submit = SubmitField("Zapisz")
+
+class AnimalForm(FlaskForm):
+    category = SelectField("Kategoria", choices=[('adopcja','adopcja'), ('znalezione','znalezione')], validators=[DataRequired()])
+    name = StringField("Imię", validators=[Optional()])
+    type = SelectField("Gatunek", choices=[], validators=[DataRequired()])
+    breed = StringField("Rasa", validators=[Optional()])
+    sex = SelectField("Płeć", choices=[('samiec','samiec'), ('samica','samica')], validators=[DataRequired()])
+    age = IntegerField("Wiek", validators=[Optional()])
+    weight = IntegerField("Waga (kg)", validators=[Optional()])
+    number = StringField("Numer", validators=[DataRequired()])
+    box = StringField("Boks", validators=[DataRequired()])
+    description = CKEditorField("Opis", validators=[DataRequired()])
+    submit = SubmitField("Dodaj") 
+
+# Strona główna
 
 @app.route("/")
 def home():
@@ -65,7 +169,7 @@ def home():
         post.description = bleach.clean(post.description, tags={'p','strong','em','s'}, strip=True)
     return render_template("home.html", three_latest_posts=three_latest_posts)
 
-#=======================AKTUALNOSCI===========================
+# Aktualności - posty
 
 # Wyświetlanie wszystkich postów
 @app.route("/aktualnosci")
@@ -167,8 +271,7 @@ def delete_post(id):
 
     return redirect(url_for('posts'))
 
-#=========================ZWIERZETA===========================
-
+# Zwierzęta
 @app.route("/zwierzeta")
 def animals():
     animals = db.session.query(
@@ -268,19 +371,13 @@ def add_animal():
 
     return render_template("animals/add_animal.html", form=form)
 
-#===========================INFO==============================
-
-
-
-#==========================KONTAKT============================
-
 # Kontakt - podglad tresci
 @app.route("/kontakt")
 def contact():
     contact = Pages.query.get_or_404(1)
     return render_template("contact/contact.html", contact=contact)
 
-# Kontakt - edycja tresci
+# Kontakt, info - edycja tresci
 @app.route("/kontakt/edycja", methods=['GET', 'POST'])
 def edit_contact():
 
@@ -312,90 +409,6 @@ def edit_contact():
 
     return render_template('contact/edit_contact.html', form=form)
 
-#==========================LOGOWANIE==========================
-
-#Info o adopcji - podglad tresci
-@app.route("/info")
-def pages():
-    pages = Pages.query.order_by(Pages.page_id.desc())
-    
-    for page in pages:
-        # ucinanie opisu posta do 300 znaków (wyświetla tylko 2 pierwsze paragrafy)
-        # (dozwolone tagi: [p, strong, em, s]; dopisywanie brakujących tagów html)
-        original_length = len(bleach.clean(page.description))
-
-        soup = BeautifulSoup(page.description, 'html.parser')
-        paragraphs = soup.find_all('p')
-        first_two_paragraphs = paragraphs[:2]
-
-        page.description = ''
-        number_of_chars = 0
-
-        for p in first_two_paragraphs:
-            if len(page.description + str(p)) > 300:
-                page.description += str(p)[:300-number_of_chars]
-                break
-            page.description += str(p)
-            number_of_chars += len(page.description)
-
-        exit_length = len(bleach.clean(page.description))
-
-        if original_length != exit_length + 1:
-            page.description = page.description[0:-4] + " ...</p>"
-        
-        page.description = bleach.clean(page.description, tags={'p','strong','em','s'}, strip=True)
-    return render_template("pages.html", pages=pages)
-
-#Info
-@app.route("/info/<int:id>")
-def page(id):
-    page = Pages.query.get_or_404(id)
-    return render_template("info.html", page=page)
-
-#dodanie info
-@app.route("/info/dodaj-info", methods=['GET', 'POST'])
-def add_page():
-    form = PagesForm()
-    if form.validate_on_submit():
-        page = Pages(
-            title = form.title.data, 
-            description = form.description.data
-            )
-        
-        form.title.data = ''
-        form.description.data = ''
-
-        db.session.add(page)
-        db.session.commit()
-        flash("Dodano info!")
-
-    return render_template("add_info.html", form=form)
-
-#Info o adopcji - edycja
-@app.route("/info/edycja/<int:id>", methods=['GET', 'POST'])
-def edit_page(id):
-
-    page = Pages.query.get_or_404(id)
-
-    form = PagesForm(obj=page)
-
-    if form.validate_on_submit():
-        
-        page.title = form.title.data, 
-        page.description = form.description.data
-        
-        form.title.data = ''
-        form.description.data = ''
-
-        db.session.add(page)
-        db.session.commit()
-        flash("Zapisano zmiany!")
-
-        return redirect(url_for('page', id=page.page_id))  
-      
-    form.title.data = page.title
-    form.description.data = page.description
-    return render_template('edit_info.html', form=form)
 
 # Logowanie
 @app.route("/logowanie", methods=['GET', 'POST'])
@@ -482,7 +495,8 @@ def create_user():
         return render_template("login/create_user.html", form=form)
     return render_template("login/create_user.html", form=form)
 
-#=====================BLEDY 404 I 500=========================
+
+# Błędy 404 i 500
 
 @app.errorhandler(404)
 def page_not_found(e):

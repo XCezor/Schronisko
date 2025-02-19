@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<h1>{{ animal.name }}</h1>
+
+<table>
+    <tr>
+        <th>Kategoria</th>
+        <th>Wiek</th>
+        <th>Gatunek</th>
+        <th>Numer</th>
+        <th>Box</th>
+        <th>Opis</th>
+    </tr>
+    <tr>
+        <td>{{ animal.category }}</td>
+        <td>{{ animal.age }}</td>
+        <td>{{ animal.type }}</td>
+        <td>{{ animal.number }}</td>
+        <td>{{ animal.box }}</td>
+        <td>{{ animal.description }}</td>
+
+    </tr>
+</table>
+
+{% endblock %}
