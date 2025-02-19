@@ -14,10 +14,10 @@
     <p>{{ post.description|safe }}</p>
 </div>
 
-<a href="/aktualnosci">Powrót</a>
+<a class="misc-post" href="/aktualnosci">Powrót</a>
 
-<a href="{{ url_for('edit_post', id=post.post_id) }}">Edytuj post</a>
+<a class="misc-post" href="{{ url_for('edit_post', id=post.post_id) }}">Edytuj post</a>
 
-<a href="{{ url_for('delete_post', id=post.post_id) }}">Usuń post</a>
+<a class="misc-post" href="{{ url_for('delete_post', id=post.post_id) }}">Usuń post</a>
 
 {% endblock %}

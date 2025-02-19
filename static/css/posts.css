@@ -13,3 +13,36 @@
     background-color: #e55e1a;
 }
 
+.post-box a {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 15px;
+    background-color: #ce5315;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.post-box a:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.misc-post {
+    display: block;
+    width: fit-content;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background-color: #ce5315;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.misc-post:hover {
+    background-color: #e6946b;
+    color:white;
+}
