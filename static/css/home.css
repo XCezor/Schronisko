@@ -2,6 +2,8 @@
 {
     min-height: 10vw;
     text-align: center;
+    margin: 20px 0;
+    padding: 20px 0;
 }
 
 /*========================================= */
@@ -75,6 +77,9 @@
     min-height: 10vw;
     text-align: center;
     justify-content: center;
+    background-color: rgb(255, 255, 255);
+    margin: 20px 0;
+    padding: 20px 0;
 }
 /*============================================ */
 /*========== Zwierzeta w schronisku ========== */
@@ -84,6 +89,8 @@
 {
     min-height: 10vw;
     text-align: center;
+    margin: 20px 0;
+    padding: 20px 0;
 }
 
 .img-desc-button-box
@@ -176,6 +183,8 @@
 {
     min-height: 10vw;
     text-align: center;
+    margin: 20px 0;
+    padding: 20px 0;
 }
 
 .info-block
