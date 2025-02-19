@@ -116,18 +116,43 @@ def post(id):
 def add_post():
     form = PostForm()
     if form.validate_on_submit():
-        post = Posts(
+        if form.title_img.data:
+            safe_filename = secure_filename(form.title_img.data.filename)
+            title_img_name = str(uuid.uuid1()) + "_" + safe_filename
+        else:
+            title_img_name = None
+
+        new_post = Posts(
             title = form.title.data, 
             author = form.author.data or 'Brak',
-            description = form.description.data
+            description = form.description.data,
+            title_img_name = title_img_name
             )
         
         form.title.data = ''
         form.author.data = ''
         form.description.data = ''
 
-        db.session.add(post)
+        db.session.add(new_post)
         db.session.commit()
+
+        # Zapisywanie plików
+        if form.title_img.data or form.images.data:
+            catalog_path = os.path.join(app.config['UPLOAD_FOLDER'], 'posts', str(new_post.post_id))
+            os.makedirs(catalog_path, exist_ok=True)
+
+            if form.title_img.data:
+                file_path = os.path.join(catalog_path, title_img_name)
+                form.title_img.data.save(file_path)
+
+            if form.images.data:
+                for file in form.images.data:
+                    safe_filename = secure_filename(file.filename)
+                    img_name = str(uuid.uuid1()) + "_" + safe_filename
+
+                    file_path = os.path.join(catalog_path, img_name)
+                    file.save(file_path)
+
         flash("Dodano post!")
 
     return render_template("posts/add_post.html", form=form)
@@ -266,17 +291,6 @@ def add_animal():
     form.type.choices = type_choices
     
     if form.validate_on_submit():
-
-        # for file in form.files.data:
-        #     safe_filename = secure_filename(file.filename)
-        #     img_name = str(uuid.uuid1()) + "_" + safe_filename
-
-        #     file_path = os.path.join(app.config['UPLOAD_FOLDER'], 'posts', '1', img_name)
-        #     catalog_path = os.path.join(app.config['UPLOAD_FOLDER'], 'posts', '1')
-
-        #     os.makedirs(catalog_path, exist_ok=True)
-            
-        #     file.save(file_path)
         
         if form.title_img.data:
             safe_filename = secure_filename(form.title_img.data.filename)
@@ -317,8 +331,6 @@ def add_animal():
 
                     file_path = os.path.join(catalog_path, img_name)
                     file.save(file_path)
-
-            flash("Dodano zdjęcie/zdjęcia.")
 
         flash("Dodano zwierzę.")
 
