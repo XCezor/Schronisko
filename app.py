@@ -8,12 +8,18 @@ import bleach
 from bs4 import BeautifulSoup
 from datetime import datetime
 from webforms import PostForm, UserForm, LoginForm, PagesForm, AnimalForm
+from werkzeug.utils import secure_filename
+import uuid as uuid 
+import os
 
 
 app = Flask(__name__)
 ckeditor = CKEditor(app)
 app.config['SECRET_KEY'] = "Ad0ptujPs4LubK0t4"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://application:Ad0ptujPs4LubK0t4@localhost/schronisko'
+
+UPLOAD_FOLDER = 'static/uploads/'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Login Manager
 
@@ -185,7 +191,12 @@ def animals():
 @app.route("/zwierzeta/<int:id>")
 def animal(id):
     animal = Animals.query.get_or_404(id)
-    return render_template("animals/animal.html", animal=animal)
+
+    path = app.config['UPLOAD_FOLDER'] + 'animals/' + str(id) + '/' 
+    all_files = os.listdir(path)
+    images = [img for img in all_files if os.path.isfile(os.path.join(path, img))]
+    
+    return render_template("animals/animal.html", animal=animal, images=images)
 
 @app.route("/zwierzeta/znalezione")
 def found():
@@ -214,6 +225,7 @@ def to_adoption():
         Animals.weight,
         Animals.number,
         Animals.box,
+        Animals.title_img_name
     ).filter(
         Animals.category == 'adopcja',
         Animals.in_shelter == True
@@ -247,6 +259,24 @@ def add_animal():
     form.type.choices = type_choices
     
     if form.validate_on_submit():
+
+        # for file in form.files.data:
+        #     safe_filename = secure_filename(file.filename)
+        #     img_name = str(uuid.uuid1()) + "_" + safe_filename
+
+        #     file_path = os.path.join(app.config['UPLOAD_FOLDER'], 'posts', '1', img_name)
+        #     catalog_path = os.path.join(app.config['UPLOAD_FOLDER'], 'posts', '1')
+
+        #     os.makedirs(catalog_path, exist_ok=True)
+            
+        #     file.save(file_path)
+        
+        if form.title_img.data:
+            safe_filename = secure_filename(form.title_img.data.filename)
+            title_img_name = str(uuid.uuid1()) + "_" + safe_filename
+        else:
+            title_img_name = None
+
         new_animal = Animals(
             category = form.category.data,
             in_shelter = True,
@@ -258,10 +288,31 @@ def add_animal():
             weight = form.weight.data,
             number = form.number.data,
             box = form.box.data,
-            description = form.description.data
-            )
+            description = form.description.data,
+            title_img_name = title_img_name
+        )
         db.session.add(new_animal)
         db.session.commit()
+
+        # Zapisywanie plików
+        if form.title_img.data or form.images.data:
+            catalog_path = os.path.join(app.config['UPLOAD_FOLDER'], 'animals', str(new_animal.animal_id))
+            os.makedirs(catalog_path, exist_ok=True)
+
+            if form.title_img.data:
+                file_path = os.path.join(catalog_path, title_img_name)
+                form.title_img.data.save(file_path)
+
+            if form.images.data:
+                for file in form.images.data:
+                    safe_filename = secure_filename(file.filename)
+                    img_name = str(uuid.uuid1()) + "_" + safe_filename
+
+                    file_path = os.path.join(catalog_path, img_name)
+                    file.save(file_path)
+
+            flash("Dodano zdjęcie/zdjęcia.")
+
         flash("Dodano zwierzę.")
 
         return redirect(url_for('add_animal'))
@@ -408,3 +459,24 @@ def page_not_found(e):
 @app.errorhandler(500)
 def page_not_found(e):
     return render_template("errors/500.html"), 500
+
+
+# @app.route("/upload-image", methods=['GET', 'POST'])
+# def upload_image():
+#     form = ImageForm()
+
+#     if form.validate_on_submit():
+#         files_filenames = []
+#         for file in form.files.data:
+#             safe_filename = secure_filename(file.filename)
+#             img_name = str(uuid.uuid1()) + "_" + safe_filename
+
+#             file_path = os.path.join(app.config['UPLOAD_FOLDER'], 'posts', '1', img_name)
+#             catalog_path = os.path.join(app.config['UPLOAD_FOLDER'], 'posts', '1')
+
+#             os.makedirs(catalog_path, exist_ok=True)
+            
+#             file.save(file_path)
+#             files_filenames.append(img_name)
+#         return render_template("upload_image.html", form=form, files_filenames=files_filenames)
+#     return render_template("upload_image.html", form=form)
