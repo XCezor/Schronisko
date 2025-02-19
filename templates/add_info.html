@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+<h1>Dodaj info ...</h1>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+
+    {{ form.title.label }}
+    {{ form.title }}
+    <br/>
+    {{ form.description.label }}
+    {{ form.description }}
+    <br/>
+    {{ form.submit() }}
+</form>
+
+{{ ckeditor.load() }}
+{{ ckeditor.config(name='description') }}
+
+{% endblock %}
