@@ -213,6 +213,7 @@ def found():
         Animals.weight,
         Animals.number,
         Animals.box,
+        Animals.title_img_name
     ).filter(
         Animals.category == 'znalezione',
         Animals.in_shelter == True
@@ -248,6 +249,7 @@ def found_home():
         Animals.weight,
         Animals.number,
         Animals.box,
+        Animals.title_img_name
     ).filter(
         Animals.in_shelter == False
     ).all()

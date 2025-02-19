@@ -11,7 +11,7 @@
     {% for animal in animals %}
         <div class="animal-box">
             <div class="animal-box-img">
-                
+                <img src="{{ url_for('static', filename='uploads/animals/' + animal.animal_id |string + '/' + animal.title_img_name) }}" alt="Zdjęcie zwierzęcia.">
             </div>
             <div class="animal-box-description">
                 <a href="{{ url_for('animal', id=animal.animal_id) }}"><h3>{{ animal.number }}</h3></a>
