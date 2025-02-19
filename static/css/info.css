@@ -6,7 +6,7 @@
     background-image: linear-gradient(164deg, rgba(70, 72, 114, 1) 22%, rgba(77, 72, 92, 1) 72%);
     border-radius: 1vw;
     color: white;
-
+    word-wrap: break-word;
 }
 
 .info-box a {

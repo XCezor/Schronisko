@@ -7,7 +7,6 @@
 {
     width: 80%;
     text-align: left;
-    word-wrap: break-word;
     margin-left: auto;
     margin-right: auto;
     margin-top: 20px;
@@ -53,8 +52,10 @@
 .post-box-description
 {
     width: auto;
+    max-width: 100%;
     height: 100%;
     float: left;
+    word-wrap: break-word;
 }
 
 .post-box-button
