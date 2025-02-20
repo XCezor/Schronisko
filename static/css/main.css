@@ -43,7 +43,7 @@ body
 }
 
 
-.navbar {
+nav {
     background-color: #e55e1a;
     padding: 15px 20px;
     display: flex;
@@ -71,7 +71,7 @@ body
 .nav-links {
     list-style: none;
     padding: 8px 8px;
-    margin: 10px 10px;
+    margin: 3px 10px;
     display: flex;
     gap: 12px;
     transition: max-height 0.3s ease;
@@ -151,135 +151,14 @@ body
     }
   }
 
-/*
-#nav 
-{
-    width: 100%;
-    padding: 10px 0;
-    background-color: #e55e1a;
-    text-align: center;
-    border-top: 1px solid #751b1b;
-    border-bottom: 1px solid #751b1b;
-}
-
-#nav ol
-{
-    padding: 0;
-    margin: 0;
-    list-style-type: none;
-    font-size: 18px;
-    height: 35px;
-    line-height: 200%;
-    display: inline-block;
-    font-family: "Outfit", serif;
-    font-optical-sizing: auto;
-    font-weight: 800;
-    font-style: normal;
-}
-
-#nav ol a
-{
-    color: #ffffff;
-    text-decoration: none;
-    display: block;
-
-}
-
-#nav ol > li
-{
-    float: left;
-    width: 150px;
-    height: 40px;
-    border-right: 1px dashed #751b1b;
-}
-
-#nav ol > li:first-child
-{
-    border-left: 1px dashed #751b1b;
-}
-
-#nav ol > li:hover
-{
-    background-color: #b1341e; 
-}
-
-#nav ol > li:hover > a
-{
-    color: #ffb482; 
-}
-
-#nav ol > li > ul
-{
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    height: 40px;
-    display: none;
-}
-
-#nav ol > li > ul > li
-{
-    background-color: #f1603b; 
-    position: relative;
-    z-index: 100;
-    border-top: 1px dashed #751b1b;
-}
-
-#nav ol > li > ul > li a
-{
-    color:#fdf2d2;
-}
-
-#nav ol > li:hover > ul
-{
-    display: block;
-}
-
-#nav ol > li > ul > li:hover
-{
-    background-color: #ff935c;
-}
-
-#nav ol > li > ul > li:hover > a
-{
-    color: #b1341e;
-}
-
-
-.sidebar
-{
-    border: 2px solid red;
-    position: fixed;
-    top: 0;
-    right: 0;
-    height: 100vh;
-    width: 250px;
-    z-index: 999;
-    background-color: #e55e1a;
-    backdrop-filter: blur(10px);
-    box-shadow: -10px 0 10px rgba(0,0,0,0.1);
-    display: block;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-}
-
-.sidebar li{
-    width: 100%;
-}
-
-.sidebar a{
-    width:100%;
-}
-*/
-
 .sticky
 {
     width: 100%;
     position: fixed;
     left: 0;
     top: 0;
-    z-index: 100;
+    z-index: 9999;
+    padding: 0px 5px;
 }
 
 #content
@@ -305,7 +184,7 @@ body
 #footer
 {
     width: 100%;
-    height: 200px;
+    height: 250px;
     padding: 0 20px;
     text-align: center;
     /* background-color: #b23f1a; */
@@ -317,9 +196,11 @@ body
 
 .contact
 {
-    width: 50%;
+    width: clamp(35%, 40%, 50%);
+    height: auto;
     text-align: left;
     float: left;
+    word-wrap: break-word;
 }
 
 .socials
@@ -332,8 +213,8 @@ body
 
 .facebook
 {
-    width: 10%;
-    height: 10%;
+    width: 50px;
+    height: 50px;
     margin: 10px;
     text-align: center;
     float: left;
@@ -345,16 +226,17 @@ body
     height: 100%;
 }
 
-.facebook:hover
+.facebook img:hover
 {
-    background-color: #ffffff28;
+    width: 60px;
+    height: 60px;
     border-radius: 100%;
 }
 
 .instagram
 {
-    width: 10%;
-    height: 10%;
+    width: 50px;
+    height: 50px;
     margin: 10px;
     text-align: center;
     float: left;
@@ -366,16 +248,17 @@ body
     height: 100%;
 }
 
-.instagram:hover
+.instagram img:hover
 {
-    background-color: #ffffff28;
+    width: 60px;
+    height: 60px;
     border-radius: 10%;
 }
 
 .tiktok
 {
-    width: 10%;
-    height: 10%;
+    width: 50px;
+    height: 50px;
     margin: 10px;
     text-align: center;
     float: left;
@@ -387,9 +270,11 @@ body
     height: 100%;
 }
 
-.tiktok:hover
+.tiktok img:hover
 {
-    background-color: #ffffff28;
+    width: 60px;
+    height: 60px;
     border-radius: 100%;
 }
 
+/* #ffffff28 */

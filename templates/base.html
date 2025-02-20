@@ -28,7 +28,7 @@
                 <div style="clear: both"></div>
             </div>
         </div>
-        <nav class="navbar">
+        <nav>
             <ul class="nav-links">
                 <li><a href="{{ url_for('home') }}">Strona główna</a></li>
                 <li><a href="{{ url_for('posts') }}">Aktualności</a></li>
@@ -55,7 +55,7 @@
                 {% else %}
                 <li><a href="{{ url_for('login') }}">Logowanie</a></li>
                 {% endif %}
-            </ul>
+            </ul> 
             <button class="hamburger">☰</button>
           </nav>
         <!-- <div id="nav">
@@ -112,9 +112,9 @@
         <div id="footer">
             <div class="contact">
                 <h2>Kontakt:</h2>
-                nr tel.: 123456789 <br>
-                email: schronisko@pw.pl <br>
-                adres: Płock, ul. Lorem 12 <br>
+                <strong>nr tel.:</strong> 24 262 47 99 <br>
+                <strong>email:</strong> schronisko.plock@prezero.com <br>
+                <strong>adres:</strong> Płock, ul. Parowa 20 <br>
             </div>
             <div class="socials">
                 <h2>Media społecznościowe:</h2>
@@ -160,15 +160,15 @@
     <script>
  
         $(document).ready(function() {
-        var NavY = $('.nav').offset().top;
+        var NavY = $('nav').offset().top;
           
         var stickyNav = function(){
         var ScrollY = $(window).scrollTop();
                
         if (ScrollY > NavY) { 
-            $('.nav').addClass('sticky');
+            $('nav').addClass('sticky');
         } else {
-            $('.nav').removeClass('sticky'); 
+            $('nav').removeClass('sticky'); 
         }
         };
           
