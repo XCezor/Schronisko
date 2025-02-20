@@ -7,11 +7,24 @@
 {% block body %}
 
 <div class="post-box">
-    <h1>{{ post.title }}</h1>
-    Autor: {{ post.author }} <br/>
-    Data: {{ post.post_datetime.strftime('%Y-%m-%d %H:%M') }}
-
-    <p>{{ post.description|safe }}</p>
+    <div class="post-box-title">
+        <h2><strong>{{ post.title }}</strong></h2>
+        <hr/>
+    </div>
+    <div class="post-box-date">
+        {{ post.post_datetime.strftime('%Y-%m-%d %H:%M') }}
+    </div>
+    <div class="post-box-container">
+        {% if post.title_img_name %}
+        <div class="post-box-img">
+            <img src="{{ url_for('static', filename='uploads/posts/' + post.post_id |string + '/' + post.title_img_name) }}" alt="Zdjęcie tytułowe">
+        </div>
+        {% endif %}
+        <div class="post-box-description">
+            <p> {{ post.description|safe }} </p>
+        </div>
+        <div style="clear: both"></div>
+    </div>
 </div>
 
 <a class="misc-post" href="/aktualnosci">Powrót</a>
