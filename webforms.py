@@ -7,7 +7,6 @@ from flask_ckeditor import CKEditorField
 
 class PostForm(FlaskForm):
     title = StringField("Tytuł", validators=[DataRequired()])
-    author = StringField("Autor (opcjonalne):")
     description = CKEditorField("Opis", validators=[DataRequired()])
     title_img = FileField("Zdjęcie tytułowe", validators=[FileAllowed(['jpg', 'jpeg', 'png'], 'Obsługiwane rozszerzenia: png, jpg, jpeg')])
     images = MultipleFileField("Galeria zdjęć", validators=[FileAllowed(['jpg', 'jpeg', 'png'], 'Obsługiwane rozszerzenia: png, jpg, jpeg')])

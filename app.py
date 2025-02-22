@@ -116,6 +116,7 @@ def post(id):
 @login_required
 def add_post():
     form = PostForm()
+
     if form.validate_on_submit():
         if form.title_img.data:
             safe_filename = secure_filename(form.title_img.data.filename)
@@ -125,20 +126,19 @@ def add_post():
 
         new_post = Posts(
             title = form.title.data, 
-            author = form.author.data or 'Brak',
+            author_id = current_user.user_id,
             description = form.description.data,
             title_img_name = title_img_name
             )
         
         form.title.data = ''
-        form.author.data = ''
         form.description.data = ''
 
         db.session.add(new_post)
         db.session.commit()
 
         # Zapisywanie plików
-        if form.title_img.data or form.images.data:
+        if form.title_img.data or any(file.filename for file in form.images.data):
             catalog_path = os.path.join(app.config['UPLOAD_FOLDER'], 'posts', str(new_post.post_id))
             os.makedirs(catalog_path, exist_ok=True)
 
@@ -169,11 +169,10 @@ def edit_post(id):
     if form.validate_on_submit():
         
         post.title = form.title.data, 
-        post.author = form.author.data or 'Brak',
+        post.author_id = current_user.user_id,
         post.description = form.description.data
         
         form.title.data = ''
-        form.author.data = ''
         form.description.data = ''
 
         db.session.add(post)
@@ -183,7 +182,6 @@ def edit_post(id):
         return redirect(url_for('post', id=post.post_id))
     
     form.title.data = post.title
-    form.author.data = post.author
     form.description.data = post.description
     return render_template('posts/edit_post.html', form=form)
 

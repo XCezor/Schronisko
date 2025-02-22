@@ -55,12 +55,14 @@ class Types(db.Model):
 class Posts(db.Model):
     post_id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
-    author = db.Column(db.String(50), server_default='Brak')
+    author_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     description = db.Column(db.Text, nullable=False)
     title_img_name = db.Column(db.String(255))
     post_datetime = db.Column(db.DateTime, default=datetime.now)
     last_edit_datetime = db.Column(db.DateTime, default=None)
     is_deleted = db.Column(db.Boolean, server_default="false")
+
+    author = db.relationship('Users', backref='Posts', lazy=True)
 
 class Pages(db.Model):
     page_id = db.Column(db.Integer, primary_key=True)
