@@ -52,8 +52,6 @@
                 {% if current_user.is_authenticated %}
                 <li><a href="{{ url_for('dashboard') }}">Moje konto</a></li>
                 <li><a href="{{ url_for('logout') }}">Wyloguj</a></li>
-                {% else %}
-                <li><a href="{{ url_for('login') }}">Logowanie</a></li>
                 {% endif %}
             </ul> 
             <button class="hamburger">☰</button>

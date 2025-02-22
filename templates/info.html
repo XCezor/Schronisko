@@ -12,7 +12,9 @@
     <p>{{ page.description|safe }}</p>
 </div>
 
+{% if current_user.is_authenticated %}
 <a class="misc-info" href="{{ url_for('edit_page', id=page.page_id) }}">Edytuj</a>
+{% endif %}
 
 <a class="misc-info" href="/info">Powrót</a>
 

@@ -12,7 +12,9 @@
     {{ contact.description|safe }}
 </div>
 
+{% if current_user.is_authenticated %}
 <a class="misc-contact" href="/kontakt/edycja">Edytuj</a> 
+{% endif %}
 
 {% endblock %}
 

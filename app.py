@@ -113,6 +113,7 @@ def post(id):
 
 # Dodawanie nowego posta
 @app.route("/aktualnosci/dodaj-post", methods=['GET', 'POST'])
+@login_required
 def add_post():
     form = PostForm()
     if form.validate_on_submit():
@@ -159,6 +160,7 @@ def add_post():
 
 # Edycja posta
 @app.route("/aktualnosci/edytuj-post/<int:id>", methods=['GET', 'POST'])
+@login_required
 def edit_post(id):
     post = Posts.query.get_or_404(id)
 
@@ -187,6 +189,7 @@ def edit_post(id):
 
 # Usuwanie posta
 @app.route("/aktualnosci/usuwanie-posta/<int:id>")
+@login_required
 def delete_post(id):
     post_to_delete = Posts.query.get_or_404(id)
 
@@ -281,6 +284,7 @@ def found_home():
     return render_template("animals/found_home.html", animals=animals)
 
 @app.route("/zwierzeta/dodaj-zwierze", methods=['GET', 'POST'])
+@login_required
 def add_animal():
     form = AnimalForm()
 
@@ -352,6 +356,7 @@ def contact():
 
 # Kontakt - edycja tresci
 @app.route("/kontakt/edycja", methods=['GET', 'POST'])
+@login_required
 def edit_contact():
 
     entry = Pages.query.get(1)
@@ -424,6 +429,7 @@ def page(id):
 
 #dodanie info
 @app.route("/info/dodaj-info", methods=['GET', 'POST'])
+@login_required
 def add_page():
     form = PagesForm()
     if form.validate_on_submit():
@@ -443,6 +449,7 @@ def add_page():
 
 #Info o adopcji - edycja
 @app.route("/info/edycja/<int:id>", methods=['GET', 'POST'])
+@login_required
 def edit_page(id):
 
     page = Pages.query.get_or_404(id)
