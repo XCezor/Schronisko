@@ -130,9 +130,6 @@ def add_post():
             description = form.description.data,
             title_img_name = title_img_name
             )
-        
-        form.title.data = ''
-        form.description.data = ''
 
         db.session.add(new_post)
         db.session.commit()

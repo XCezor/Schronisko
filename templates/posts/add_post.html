@@ -14,15 +14,51 @@
     {{ form.description }}
     <br/>
     {{ form.title_img.label }}
-    {{ form.title_img }}
+    {{ form.title_img(id="titleImgPreview") }}
+    <br/>
+
+    <img class="uploaded-title-img" src="#" alt="Zdjęcie tytułowe" />
+
     <br/>
     {{ form.images.label }}
-    {{ form.images }}
+    {{ form.images(id="imgInp") }}
+    <br/>
+
+    <div class="blah-container"></div>
+
     <br/>
     {{ form.submit() }}
 </form>
 
 {{ ckeditor.load() }}
 {{ ckeditor.config(name='description') }}
+
+<script>
+    titleImgPreview.onchange = evt => {
+        const [file] = titleImgPreview.files;
+        if (file) {
+            const imgs = document.querySelectorAll('.uploaded-title-img');
+            imgs.forEach(img => {
+                img.src = URL.createObjectURL(file);
+            });
+        }
+    };
+</script>
+
+<script>
+    imgInp.onchange = evt => {
+        const files = imgInp.files; // Pobieramy wszystkie wybrane pliki
+        const imgsContainer = document.querySelector('.blah-container'); // Kontener, w którym będą wyświetlane obrazy
+
+        imgsContainer.innerHTML = ''; // Czyścimy kontener przed dodaniem nowych obrazów
+
+        Array.from(files).forEach(file => {
+            const img = document.createElement('img'); // Tworzymy nowy element img
+            img.src = URL.createObjectURL(file); // Tworzymy URL dla pliku i ustawiamy jako src
+            img.alt = file.name; // Ustawiamy nazwę pliku jako alternatywny tekst
+            imgsContainer.appendChild(img); // Dodajemy obraz do kontenera
+        });
+    };
+</script>
 
 {% endblock %}
