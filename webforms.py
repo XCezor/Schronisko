@@ -34,9 +34,9 @@ class PagesForm(FlaskForm):
     submit = SubmitField("Zapisz")
 
 class AnimalForm(FlaskForm):
-    category = SelectField("Kategoria", choices=[], validators=[DataRequired()])
+    category = SelectField("Kategoria", choices=[], validators=[DataRequired()], coerce=int)
     name = StringField("Imię", validators=[Optional()])
-    type = SelectField("Gatunek", choices=[], validators=[DataRequired()])
+    type = SelectField("Gatunek", choices=[], validators=[DataRequired()], coerce=int)
     breed = StringField("Rasa", validators=[Optional()])
     sex = SelectField("Płeć", choices=[('samiec','samiec'), ('samica','samica')], validators=[DataRequired()])
     castration_sterilization = SelectField("Kastracja/sterylizacja", choices=[('true','tak'), ('false','nie')], validators=[], coerce=lambda x: x == 'true')
