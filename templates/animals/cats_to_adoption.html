@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/animals.css') }}">
+{% endblock %}
+
+{% block body %}
+<h1>Koty do adopcji</h1>
+
+<div class="animal-boxes-module">
+    {% for animal in animals %}
+        <div class="animal-box">
+            <div class="animal-box-img">
+                {% if animal.title_img_name %}
+                    <img src="{{ url_for('static', filename='uploads/animals/' + animal.animal_id |string + '/' + animal.title_img_name) }}" alt="Zdjęcie zwierzęcia.">
+                {% endif %}
+            </div>
+            <div class="animal-box-description">
+                {% if animal.name %}
+                    <a href="{{ url_for('animal', id=animal.animal_id) }}"><h3>{{ animal.name }}</h3></a>
+                    {{ animal.number }}<br/>
+                {% else %}
+                    <a href="{{ url_for('animal', id=animal.animal_id) }}"><h3>{{ animal.number }}</h3></a>
+                {% endif %}
+                {{ animal.breed }}<br/>
+                {{ animal.sex }}, {{ animal.age }} lat, {{ animal.weight }} kg<br/>
+                {{ animal.box }}<br/>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}
