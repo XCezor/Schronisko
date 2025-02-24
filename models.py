@@ -30,16 +30,22 @@ class Users(db.Model, UserMixin):
 class Animals(db.Model):
     animal_id = db.Column(db.Integer, primary_key=True)
     type_id = db.Column(db.Integer, db.ForeignKey('types.type_id')) 
-    category = db.Column(db.String(10), nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('categories.category_id')) 
     in_shelter = db.Column(db.Boolean, nullable=False, server_default="true")
     name = db.Column(db.String(30))
     breed = db.Column(db.String(30))
     date_of_birth = db.Column(db.TIMESTAMP)
     age = db.Column(db.Integer)
     sex = db.Column(db.String(6), nullable=False)
+    castration_sterilization = db.Column(db.Boolean, nullable=False, server_default="false")
     weight = db.Column(db.Integer)
+    fur = db.Column(db.String(100))
     number = db.Column(db.String(15))
     box = db.Column(db.String(20))
+    attitude_to_dogs = db.Column(db.String(200))
+    attitude_to_cats = db.Column(db.String(200))
+    attitude_to_people = db.Column(db.String(200))
+    character = db.Column(db.String(200))
     description = db.Column(db.Text)
     title_img_name = db.Column(db.String(255))
     date_add = db.Column(db.TIMESTAMP, default=datetime.now)
@@ -47,10 +53,15 @@ class Animals(db.Model):
     date_off = db.Column(db.TIMESTAMP)
 
     type = db.relationship('Types', backref='Animals', lazy=True)
+    category = db.relationship('Categories', backref='Animals', lazy=True)
 
 class Types(db.Model):
     type_id = db.Column(db.Integer, primary_key=True) 
-    name = db.Column(db.String(20))
+    name = db.Column(db.String(20), nullable=False)
+
+class Categories(db.Model):
+    category_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(20), nullable=False)
 
 class Posts(db.Model):
     post_id = db.Column(db.Integer, primary_key=True)
