@@ -20,7 +20,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://application:Ad0ptujPs4LubK
 
 UPLOAD_FOLDER = 'static/uploads/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 30 * 1024 # Limit przesyłanych zdjęć: 5MB = 5 * 1024 * 1024
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024 # Limit przesyłanych zdjęć: 5MB = 5 * 1024 * 1024
 
 # Login Manager
 
@@ -144,7 +144,7 @@ def add_post():
                 file_path = os.path.join(catalog_path, title_img_name)
                 form.title_img.data.save(file_path)
 
-            if form.images.data:
+            if any(file.filename for file in form.images.data):
                 for file in form.images.data:
                     safe_filename = secure_filename(file.filename)
                     img_name = str(uuid.uuid1()) + "_" + safe_filename
@@ -349,7 +349,7 @@ def add_animal():
                 file_path = os.path.join(catalog_path, title_img_name)
                 form.title_img.data.save(file_path)
 
-            if form.images.data:
+            if any(img.filename for img in form.images.data):
                 for file in form.images.data:
                     safe_filename = secure_filename(file.filename)
                     img_name = str(uuid.uuid1()) + "_" + safe_filename
