@@ -5,13 +5,17 @@
 {% endblock %}
 
 {% block body %}
-<h1>Ostatnio znalezione</h1>
+<h1>Niedawno trafiły</h1>
 
 <div class="animal-boxes-module">
     {% for animal in animals %}
         <div class="animal-box">
             <div class="animal-box-img">
-                <img src="{{ url_for('static', filename='uploads/animals/' + animal.animal_id |string + '/' + animal.title_img_name) }}" alt="Zdjęcie zwierzęcia.">
+                {% if animal.title_img_name %}
+                    <a href="{{ url_for('animal', id=animal.animal_id) }}">
+                        <img src="{{ url_for('static', filename='uploads/animals/' + animal.animal_id |string + '/' + animal.title_img_name) }}" alt="Zdjęcie zwierzęcia.">
+                    </a>
+                {% endif %}
             </div>
             <div class="animal-box-description">
                 <a href="{{ url_for('animal', id=animal.animal_id) }}"><h3>{{ animal.number }}</h3></a>
