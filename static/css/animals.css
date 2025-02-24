@@ -11,18 +11,17 @@
     height: 400px;
     width: 300px;
     padding: 1vw;
-    background-color: rgba(70, 72, 114, 1);
-    background-image: linear-gradient(164deg, rgba(70, 72, 114, 1) 22%, rgba(77, 72, 92, 1) 72%);
+    background-color: #eeeeee;
     border-radius: 2vw;
-    color: white;
+    color: #4d485c;
+    -webkit-box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
+    -moz-box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
+    box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
 }
 
 .animal-box-img
 {
-    margin-top: 10px;
     height: 60%;
-    margin-left: 10px;
-    margin-right: 10px;
     border-radius: 2vw;
     background-color: white;
 }
@@ -40,7 +39,6 @@
     font-size: small;
     font-weight: 600;
     text-align: left;
-    color: white;
 }
 
 
