@@ -33,7 +33,7 @@ def load_user(user_id):
 
 # Baza danych
 
-from models import db, Users, Animals, Types, Posts, Pages
+from models import db, Users, Animals, Types, Categories, Posts, Pages
 
 migrate = Migrate(app, db)
 
@@ -200,16 +200,8 @@ def delete_post(id):
 
 @app.route("/zwierzeta")
 def animals():
-    animals = db.session.query(
-        Animals.category, 
-        Animals.name, 
-        Animals.age, 
-        Types.name.label("type"),
-        Animals.number,
-        Animals.box,
-        ).join(Types, Types.type_id == Animals.type_id).all()
     
-    return render_template("animals/animals.html", animals=animals)
+    return render_template("animals/animals.html")
 
 @app.route("/zwierzeta/<int:id>")
 def animal(id):
@@ -226,8 +218,8 @@ def animal(id):
 
     return render_template("animals/animal.html", animal=animal, images=images)
 
-@app.route("/zwierzeta/znalezione")
-def found():
+@app.route("/zwierzeta/niedawno-trafily")
+def recently_arrived():
     animals = db.session.query(
         Animals.animal_id,
         Animals.sex,
@@ -238,13 +230,13 @@ def found():
         Animals.box,
         Animals.title_img_name
     ).filter(
-        Animals.category == 'znalezione',
+        Animals.category_id == 2,
         Animals.in_shelter == True
     ).all()
-    return render_template("animals/found.html", animals=animals)
+    return render_template("animals/recently_arrived.html", animals=animals)
 
-@app.route("/zwierzeta/do-adopcji")
-def to_adoption():
+@app.route("/zwierzeta/psy-do-adopcji")
+def dogs_to_adoption():
     animals = db.session.query(
         Animals.animal_id,
         Animals.name,
@@ -256,10 +248,30 @@ def to_adoption():
         Animals.box,
         Animals.title_img_name
     ).filter(
-        Animals.category == 'adopcja',
+        Animals.category_id == 1,
+        Animals.type_id == 1,
         Animals.in_shelter == True
     ).all()
-    return render_template("animals/to_adoption.html", animals=animals)
+    return render_template("animals/dogs_to_adoption.html", animals=animals)
+
+@app.route("/zwierzeta/koty-do-adopcji")
+def cats_to_adoption():
+    animals = db.session.query(
+        Animals.animal_id,
+        Animals.name,
+        Animals.breed,
+        Animals.sex,
+        Animals.age,
+        Animals.weight,
+        Animals.number,
+        Animals.box,
+        Animals.title_img_name
+    ).filter(
+        Animals.category_id == 1,
+        Animals.type_id == 2,
+        Animals.in_shelter == True
+    ).all()
+    return render_template("animals/cats_to_adoption.html", animals=animals)
 
 @app.route("/zwierzeta/znalazly-dom")
 def found_home():
@@ -288,6 +300,12 @@ def add_animal():
     for type in types:
         type_choices.append((type.type_id, type.name))
     form.type.choices = type_choices
+
+    categories = Categories.query.all()
+    category_choices = []
+    for category in categories:
+        category_choices.append((category.category_id, category.name))
+    form.category.choices = category_choices
     
     if form.validate_on_submit():
         
@@ -298,24 +316,31 @@ def add_animal():
             title_img_name = None
 
         new_animal = Animals(
-            category = form.category.data,
+            category_id = form.category.data,
             in_shelter = True,
             name = form.name.data,
             type_id = form.type.data, 
             breed = form.breed.data,
             sex = form.sex.data,
+            castration_sterilization = form.castration_sterilization.data,
             age = form.age.data,
+            fur = form.fur.data,
             weight = form.weight.data,
             number = form.number.data,
             box = form.box.data,
+            attitude_to_dogs = form.attitude_to_dogs.data,
+            attitude_to_cats = form.attitude_to_cats.data,
+            attitude_to_people = form.attitude_to_people.data,
+            character = form.character.data,
             description = form.description.data,
             title_img_name = title_img_name
         )
+
         db.session.add(new_animal)
         db.session.commit()
 
-        # Zapisywanie plików
-        if form.title_img.data or form.images.data:
+        # Zapisywanie plików 
+        if form.title_img.data or any(img.filename for img in form.images.data):
             catalog_path = os.path.join(app.config['UPLOAD_FOLDER'], 'animals', str(new_animal.animal_id))
             os.makedirs(catalog_path, exist_ok=True)
 
