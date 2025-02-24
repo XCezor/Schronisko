@@ -13,14 +13,19 @@
     <h1>{{ animal.number }}</h1>
 {% endif %}
 
-<strong>Kategoria: </strong>{{ animal.category }}<br/>
 <strong>Rasa: </strong>{{ animal.breed }}<br/>
-<strong>Płeć: </strong>{{ animal.sex }}<br/>
 <strong>Data urodzenia: </strong>{{ animal.date_of_birth }}<br/>
+<strong>Płeć: </strong>{{ animal.sex }}<br/>
+<strong>Kastracja/sterylizacja: </strong>{{ 'tak' if animal.castration_sterilization == true else 'nie' }}<br/>
 <strong>Wiek: </strong>{{ animal.age }}<br/>
 <strong>Waga: </strong>{{ animal.weight }} kg<br/>
+<strong>Futro: </strong>{{ animal.fur }}<br/>
 <strong>Numer: </strong>{{ animal.number }}<br/>
 <strong>Boks: </strong>{{ animal.box }}<br/>
+<strong>Stosunek do psów: </strong>{{ animal.attitude_to_dogs }}<br/>
+<strong>Stosunek do kotów: </strong>{{ animal.attitude_to_cats }}<br/>
+<strong>Stosunek do ludzi: </strong>{{ animal.attitude_to_people }}<br/>
+<strong>Charakter: </strong>{{ animal.character }}<br/>
 <p>{{ animal.description|safe }}</p><br/>
 
 
@@ -35,5 +40,9 @@
         Brak zdjęć.
     {% endif %}
 </div>
+
+{% if current_user.is_authenticated %}
+    <a href="{{ url_for('edit_animal', id=animal.animal_id) }}">Edytuj</a>
+{% endif %}
 
 {% endblock %}
