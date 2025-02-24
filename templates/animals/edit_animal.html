@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<h1>Dodaj zwierzę</h1>
+<form method="POST" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+
+    {{ form.category.label }}
+    {{ form.category }}
+    <br/>
+    {{ form.name.label }}
+    {{ form.name }}
+    <br/>
+    {{ form.type.label }}
+    {{ form.type }}
+    <br/>
+    {{ form.breed.label }}
+    {{ form.breed }}
+    <br/>
+    {{ form.sex.label }}
+    {{ form.sex }}
+    <br/>
+    {{ form.fur.label }}
+    {{ form.fur }}
+    <br/>
+    {{ form.castration_sterilization.label }}
+    {{ form.castration_sterilization }}
+    <br/>
+    {{ form.age.label }}
+    {{ form.age }}
+    <br/>
+    {{ form.weight.label }}
+    {{ form.weight }}
+    <br/>
+    {{ form.number.label }}
+    {{ form.number }}
+    <br/>
+    {{ form.box.label }}
+    {{ form.box }}
+    <br/>
+    {{ form.attitude_to_dogs.label }}
+    {{ form.attitude_to_dogs }}
+    <br/>
+    {{ form.attitude_to_cats.label }}
+    {{ form.attitude_to_cats }}
+    <br/>
+    {{ form.attitude_to_people.label }}
+    {{ form.attitude_to_people }}
+    <br/>
+    {{ form.character.label }}
+    {{ form.character }}
+    <br/>
+    {{ form.description.label }}
+    {{ form.description }}
+    <br/>
+    {{ form.title_img.label }}
+    {{ form.title_img }}
+    <br/>
+    {{ form.images.label }}
+    {{ form.images }}
+    <br/>
+    {{ form.submit() }}
+</form>
+
+{{ ckeditor.load() }}
+{{ ckeditor.config(name='description') }}
+
+{% endblock %}
