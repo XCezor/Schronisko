@@ -20,6 +20,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://application:Ad0ptujPs4LubK
 
 UPLOAD_FOLDER = 'static/uploads/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 30 * 1024 # Limit przesyłanych zdjęć: 5MB = 5 * 1024 * 1024
 
 # Login Manager
 
@@ -361,6 +362,44 @@ def add_animal():
         return redirect(url_for('add_animal'))
 
     return render_template("animals/add_animal.html", form=form)
+
+@app.route("/zwierzeta/edytuj-zwierze/<int:id>", methods=['GET', 'POST'])
+@login_required
+def edit_animal(id):
+    form = AnimalForm()
+
+    animal = Animals.query.get_or_404(id)
+
+    types = Types.query.all()
+    type_choices = []
+    for type in types:
+        type_choices.append((type.type_id, type.name))
+    form.type.choices = type_choices
+
+    categories = Categories.query.all()
+    category_choices = []
+    for category in categories:
+        category_choices.append((category.category_id, category.name))
+    form.category.choices = category_choices
+
+    form.type.data = animal.type_id
+    form.category.data = animal.category_id
+    form.name.data = animal.name
+    form.breed.data = animal.breed
+    form.age.data = animal.age
+    form.sex.data = animal.sex
+    form.castration_sterilization.data = animal.castration_sterilization
+    form.weight.data = animal.weight
+    form.fur.data = animal.fur
+    form.number.data = animal.number
+    form.box.data = animal.box
+    form.attitude_to_dogs.data = animal.attitude_to_dogs
+    form.attitude_to_cats.data = animal.attitude_to_cats
+    form.attitude_to_people.data = animal.attitude_to_people
+    form.character.data = animal.character
+    form.description.data = animal.description
+
+    return render_template("animals/edit_animal.html", form=form)
 
 #===========================INFO==============================
 
