@@ -6,6 +6,21 @@
     justify-content: left;
 }
 
+.animal-boxes-module a
+{
+    text-decoration: none;
+}
+
+.animal-boxes-module a:hover
+{
+    text-decoration: none;
+    -webkit-transform: scale(1.02);
+    -moz-transform: scale(1.02);
+    -ms-transform: scale(1.02);
+    -o-transform: scale(1.02);
+    transform: scale(1.02);
+}
+
 .animal-box
 {
     height: 400px;
@@ -14,9 +29,9 @@
     background-color: #eeeeee;
     border-radius: 2vw;
     color: #4d485c;
-    -webkit-box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
-    -moz-box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
-    box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 1);
+    -webkit-box-shadow: 8px 8px 24px 0px rgba(198, 199, 200, 1);
+    -moz-box-shadow: 8px 8px 24px 0px rgba(198, 199, 200, 1);
+    box-shadow: 8px 8px 24px 0px rgba(198, 199, 200, 1);
 }
 
 .animal-box-img
@@ -41,6 +56,10 @@
     text-align: left;
 }
 
+.animal-box-description h3
+{
+    color: #e55e1a;
+}
 
 .images-gallery
 {

@@ -9,26 +9,26 @@
 
 <div class="animal-boxes-module">
     {% for animal in animals %}
-        <div class="animal-box">
-            <div class="animal-box-img">
-                {% if animal.title_img_name %}
-                    <a href="{{ url_for('animal', id=animal.animal_id) }}">
+        <a href="{{ url_for('animal', id=animal.animal_id) }}">
+            <div class="animal-box">
+                <div class="animal-box-img">
+                    {% if animal.title_img_name %}
                         <img src="{{ url_for('static', filename='uploads/animals/' + animal.animal_id |string + '/' + animal.title_img_name) }}" alt="Zdjęcie zwierzęcia.">
-                    </a>
-                {% endif %}
+                    {% endif %}
+                </div>
+                <div class="animal-box-description">
+                    {% if animal.name %}
+                        <h3>{{ animal.name }}</h3>
+                        {{ animal.number }}<br/>
+                    {% else %}
+                        <h3>{{ animal.number }}</h3>
+                    {% endif %}
+                    {{ animal.breed }}<br/>
+                    {{ animal.sex }}, {{ animal.age }} lat, {{ animal.weight }} kg<br/>
+                    {{ animal.box }}<br/>
+                </div>
             </div>
-            <div class="animal-box-description">
-                {% if animal.name %}
-                    <a href="{{ url_for('animal', id=animal.animal_id) }}"><h3>{{ animal.name }}</h3></a>
-                    {{ animal.number }}<br/>
-                {% else %}
-                    <a href="{{ url_for('animal', id=animal.animal_id) }}"><h3>{{ animal.number }}</h3></a>
-                {% endif %}
-                {{ animal.breed }}<br/>
-                {{ animal.sex }}, {{ animal.age }} lat, {{ animal.weight }} kg<br/>
-                {{ animal.box }}<br/>
-            </div>
-        </div>
+        </a>
     {% endfor %}
 </div>
 
