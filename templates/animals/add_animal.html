@@ -20,6 +20,12 @@
     {{ form.sex.label }}
     {{ form.sex }}
     <br/>
+    {{ form.fur.label }}
+    {{ form.fur }}
+    <br/>
+    {{ form.castration_sterilization.label }}
+    {{ form.castration_sterilization }}
+    <br/>
     {{ form.age.label }}
     {{ form.age }}
     <br/>
@@ -32,6 +38,18 @@
     {{ form.box.label }}
     {{ form.box }}
     <br/>
+    {{ form.attitude_to_dogs.label }}
+    {{ form.attitude_to_dogs }}
+    <br/>
+    {{ form.attitude_to_cats.label }}
+    {{ form.attitude_to_cats }}
+    <br/>
+    {{ form.attitude_to_people.label }}
+    {{ form.attitude_to_people }}
+    <br/>
+    {{ form.character.label }}
+    {{ form.character }}
+    <br/>
     {{ form.description.label }}
     {{ form.description }}
     <br/>
@@ -43,5 +61,8 @@
     <br/>
     {{ form.submit() }}
 </form>
+
+{{ ckeditor.load() }}
+{{ ckeditor.config(name='description') }}
 
 {% endblock %}
