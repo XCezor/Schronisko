@@ -6,28 +6,38 @@
 
 {% block body %}
 
-{% if animal.name %}
-    <h1>{{ animal.name }}</h1>
-    <h3 style="color: gray;">{{ animal.number }}</h3>
-{% else %}
-    <h1>{{ animal.number }}</h1>
-{% endif %}
+<div class="animal-page">
+    {% if animal.name %}
+        <h1>{{ animal.name }}</h1>
+        <h3 style="color: gray;">{{ animal.number }}</h3>
+    {% else %}
+        <h1>{{ animal.number }}</h1>
+    {% endif %}
 
-<strong>Rasa: </strong>{{ animal.breed }}<br/>
-<strong>Data urodzenia: </strong>{{ animal.date_of_birth }}<br/>
-<strong>Płeć: </strong>{{ animal.sex }}<br/>
-<strong>Kastracja/sterylizacja: </strong>{{ 'tak' if animal.castration_sterilization == true else 'nie' }}<br/>
-<strong>Wiek: </strong>{{ animal.age }}<br/>
-<strong>Waga: </strong>{{ animal.weight }} kg<br/>
-<strong>Futro: </strong>{{ animal.fur }}<br/>
-<strong>Numer: </strong>{{ animal.number }}<br/>
-<strong>Boks: </strong>{{ animal.box }}<br/>
-<strong>Stosunek do psów: </strong>{{ animal.attitude_to_dogs }}<br/>
-<strong>Stosunek do kotów: </strong>{{ animal.attitude_to_cats }}<br/>
-<strong>Stosunek do ludzi: </strong>{{ animal.attitude_to_people }}<br/>
-<strong>Charakter: </strong>{{ animal.character }}<br/>
-<p>{{ animal.description|safe }}</p><br/>
-
+    <div class="animal-page-content">
+        <div class="animal-page-img">
+            {% if animal.title_img_name %}
+                <img src="{{ url_for('static', filename='uploads/animals/' + animal.animal_id |string + '/' + animal.title_img_name) }}" alt="Zdjęcie"/>
+            {% endif %}
+        </div>
+        <div class="animal-page-description">
+        <strong>Rasa: </strong>{{ animal.breed }}<br/>
+        <strong>Data urodzenia: </strong>{{ animal.date_of_birth }}<br/>
+        <strong>Płeć: </strong>{{ animal.sex }}<br/>
+        <strong>Kastracja/sterylizacja: </strong>{{ 'tak' if animal.castration_sterilization == true else 'nie' }}<br/>
+        <strong>Wiek: </strong>{{ animal.age }}<br/>
+        <strong>Waga: </strong>{{ animal.weight }} kg<br/>
+        <strong>Futro: </strong>{{ animal.fur }}<br/>
+        <strong>Numer: </strong>{{ animal.number }}<br/>
+        <strong>Boks: </strong>{{ animal.box }}<br/>
+        <strong>Stosunek do psów: </strong>{{ animal.attitude_to_dogs }}<br/>
+        <strong>Stosunek do kotów: </strong>{{ animal.attitude_to_cats }}<br/>
+        <strong>Stosunek do ludzi: </strong>{{ animal.attitude_to_people }}<br/>
+        <strong>Charakter: </strong>{{ animal.character }}<br/>
+        <p>{{ animal.description|safe }}</p><br/>
+        </div>
+    </div>
+</div>
 
 <div class="images-gallery">
     {% if images %}
