@@ -2,6 +2,8 @@
 
 ## Potrzebne na start:
 
+### Linux
+
 ### Baza danych PostgreSQL:
 
 - baza o nazwie `schronisko`
@@ -37,9 +39,9 @@ GRANT ALL PRIVILEGES ON SCHEMA public TO application;
 
 ## Przygotowanie środowiska
 
-- Utwórz katalog `Schronisko`, w terminalu wejdź do niego i wpisz `git clone https://github.com/Kamil-Dolkowski/Schronisko.git`
+- Wpisz w terminalu (będąc w wybranym przez siebie miejscu) `git clone https://github.com/Kamil-Dolkowski/Schronisko.git`, aby sklonować repozytorium.
 
-- Następnie wpisz w terminalu `virtualenv env`, by utworzyć virtual environment.
+- Następnie wejdź do katalogu `Schronisko` [ważne!] i wpisz w terminalu (będąc w katalogu Schronisko !! ) `virtualenv env`, by utworzyć virtual environment.
 
 - Włącz env, wpisując `source env/bin/activate`.
 
