@@ -68,6 +68,47 @@
     padding: 20px;
 }
 
+.animal-page-header
+{
+    width: 100%;
+}
+
+.animal-page-title
+{
+    max-width: 70%;
+    float: left;
+}
+
+.animal-page-migrate-buttons
+{
+    width: 30%;
+    float: right;
+}
+
+.animal-page-migrate-buttons input 
+{
+    display: block;
+    width: fit-content;
+    float: left;
+    margin: 20px 10px;
+    margin-bottom: 0px;
+    padding: 10px 20px;
+    background-color: #ce5315;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.animal-page-migrate-buttons input:hover
+{
+    background-color: #e6946b;
+    color:white;
+    transform: scale(1.1); 
+}
+
 .animal-page-content
 {
     display: grid;

@@ -7,12 +7,29 @@
 {% block body %}
 
 <div class="animal-page">
-    {% if animal.name %}
-        <h1>{{ animal.name }}</h1>
-        <h3 style="color: gray;">{{ animal.number }}</h3>
-    {% else %}
-        <h1>{{ animal.number }}</h1>
-    {% endif %}
+    <div class="animal-page-header">
+        <div class="animal-page-title">
+            {% if animal.name %}
+                <h1>{{ animal.name }}</h1>
+                <h3 style="color: gray;">{{ animal.number }}</h3>
+            {% else %}
+                <h1>{{ animal.number }}</h1>
+            {% endif %}
+        </div>
+
+        {% if current_user.is_authenticated %}
+        <div class="animal-page-migrate-buttons">
+            <h4>Przenieś do kategorii:</h4>
+            <form method="POST">
+            {{ form.hidden_tag() }}
+
+            {{ form.adoption() }}
+            {{ form.found_home() }}
+            </form>
+        </div>
+        <div style="clear: both;"></div>
+        {% endif %}
+    </div>
 
     <div class="animal-page-content">
         <div class="animal-page-img">

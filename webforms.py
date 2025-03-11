@@ -53,3 +53,7 @@ class AnimalForm(FlaskForm):
     title_img = FileField("Zdjęcie tytułowe", validators=[FileAllowed(['jpg', 'jpeg', 'png'], 'Obsługiwane rozszerzenia: png, jpg, jpeg')])
     images = MultipleFileField("Galeria zdjęć", validators=[FileAllowed(['jpg', 'jpeg', 'png'], 'Obsługiwane rozszerzenia: png, jpg, jpeg')])
     submit = SubmitField("Dodaj") 
+
+class AnimalMigrateForm(FlaskForm):
+    adoption = SubmitField("Adopcja") 
+    found_home = SubmitField("Znalazł/a dom")

@@ -7,7 +7,7 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, log
 import bleach
 from bs4 import BeautifulSoup
 from datetime import datetime
-from webforms import PostForm, UserForm, LoginForm, PagesForm, AnimalForm
+from webforms import PostForm, UserForm, LoginForm, PagesForm, AnimalForm, AnimalMigrateForm
 from werkzeug.utils import secure_filename
 import uuid as uuid 
 import os
@@ -204,9 +204,25 @@ def animals():
     
     return render_template("animals/animals.html")
 
-@app.route("/zwierzeta/<int:id>")
+@app.route("/zwierzeta/<int:id>", methods=['GET','POST'])
 def animal(id):
     animal = Animals.query.get_or_404(id)
+
+    form = AnimalMigrateForm()
+
+    if form.validate_on_submit():
+        if form.adoption.data:
+            animal.category_id = 1
+            flash("Zmieniono kategorię na: 'adopcja'")
+        if form.found_home.data:
+            # animal.category_id = 3
+            animal.in_shelter = False
+            flash("Zmieniono kategorię na: 'znalazł/a dom'")
+
+        db.session.add(animal)
+        db.session.commit()
+
+        return redirect(url_for('animal', id=animal.animal_id))
 
     path = app.config['UPLOAD_FOLDER'] + 'animals/' + str(id) + '/' 
     is_dir = os.path.isdir(path)
@@ -217,7 +233,7 @@ def animal(id):
     else:
         images=None
 
-    return render_template("animals/animal.html", animal=animal, images=images)
+    return render_template("animals/animal.html", animal=animal, images=images, form=form)
 
 @app.route("/zwierzeta/niedawno-trafily")
 def recently_arrived():
@@ -382,6 +398,57 @@ def edit_animal(id):
         category_choices.append((category.category_id, category.name))
     form.category.choices = category_choices
 
+    if form.validate_on_submit():
+        
+        if form.title_img.data:
+            safe_filename = secure_filename(form.title_img.data.filename)
+            title_img_name = str(uuid.uuid1()) + "_" + safe_filename
+        else:
+            title_img_name = None
+        
+        animal.category_id = form.category.data,
+        animal.in_shelter = True,
+        animal.name = form.name.data,
+        animal.type_id = form.type.data, 
+        animal.breed = form.breed.data,
+        animal.sex = form.sex.data,
+        animal.castration_sterilization = form.castration_sterilization.data,
+        animal.age = form.age.data,
+        animal.fur = form.fur.data,
+        animal.weight = form.weight.data,
+        animal.number = form.number.data,
+        animal.box = form.box.data,
+        animal.attitude_to_dogs = form.attitude_to_dogs.data,
+        animal.attitude_to_cats = form.attitude_to_cats.data,
+        animal.attitude_to_people = form.attitude_to_people.data,
+        animal.character = form.character.data,
+        animal.description = form.description.data,
+        animal.title_img_name = title_img_name
+
+        db.session.add(animal)
+        db.session.commit()
+
+        # Zapisywanie plików 
+        if form.title_img.data or any(img.filename for img in form.images.data):
+            catalog_path = os.path.join(app.config['UPLOAD_FOLDER'], 'animals', str(animal.animal_id))
+            os.makedirs(catalog_path, exist_ok=True)
+
+            if form.title_img.data:
+                file_path = os.path.join(catalog_path, title_img_name)
+                form.title_img.data.save(file_path)
+
+            if any(img.filename for img in form.images.data):
+                for file in form.images.data:
+                    safe_filename = secure_filename(file.filename)
+                    img_name = str(uuid.uuid1()) + "_" + safe_filename
+
+                    file_path = os.path.join(catalog_path, img_name)
+                    file.save(file_path)
+
+        flash("Zapisano zmiany!")
+
+        return redirect(url_for('edit_animal'))
+
     form.type.data = animal.type_id
     form.category.data = animal.category_id
     form.name.data = animal.name
@@ -398,6 +465,8 @@ def edit_animal(id):
     form.attitude_to_people.data = animal.attitude_to_people
     form.character.data = animal.character
     form.description.data = animal.description
+
+    form.submit.label.text = 'Zapisz'
 
     return render_template("animals/edit_animal.html", form=form)
 
