@@ -75,13 +75,13 @@
 
 .animal-page-title
 {
-    max-width: 70%;
+    max-width: 60%;
     float: left;
 }
 
 .animal-page-migrate-buttons
 {
-    width: 30%;
+    width: 40%;
     float: right;
 }
 

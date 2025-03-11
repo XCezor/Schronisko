@@ -23,8 +23,18 @@
             <form method="POST">
             {{ form.hidden_tag() }}
 
-            {{ form.adoption() }}
-            {{ form.found_home() }}
+            {% if animal.category_id != 1 or animal.in_shelter == False %}
+                {{ form.recently_arrived() }}
+            {% endif %}
+
+            {% if animal.category_id != 2 or animal.in_shelter == False %}
+                {{ form.adoption() }}
+            {% endif %}
+
+            {% if animal.in_shelter == True %}    
+                {{ form.found_home() }}
+            {% endif %}
+            
             </form>
         </div>
         <div style="clear: both;"></div>

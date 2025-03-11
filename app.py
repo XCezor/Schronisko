@@ -211,13 +211,17 @@ def animal(id):
     form = AnimalMigrateForm()
 
     if form.validate_on_submit():
-        if form.adoption.data:
+        if form.recently_arrived.data:
             animal.category_id = 1
-            flash("Zmieniono kategorię na: 'adopcja'")
+            animal.in_shelter = True
+            flash("Zmieniono kategorię na: 'Niedawno trafiły'")
+        if form.adoption.data:
+            animal.category_id = 2
+            animal.in_shelter = True
+            flash("Zmieniono kategorię na: 'Do adopcji'")
         if form.found_home.data:
-            # animal.category_id = 3
             animal.in_shelter = False
-            flash("Zmieniono kategorię na: 'znalazł/a dom'")
+            flash("Zmieniono kategorię na: 'Znalazły dom'")
 
         db.session.add(animal)
         db.session.commit()
@@ -247,7 +251,7 @@ def recently_arrived():
         Animals.box,
         Animals.title_img_name
     ).filter(
-        Animals.category_id == 2,
+        Animals.category_id == 1,
         Animals.in_shelter == True
     ).all()
     return render_template("animals/recently_arrived.html", animals=animals)
@@ -265,7 +269,7 @@ def dogs_to_adoption():
         Animals.box,
         Animals.title_img_name
     ).filter(
-        Animals.category_id == 1,
+        Animals.category_id == 2,
         Animals.type_id == 1,
         Animals.in_shelter == True
     ).all()
@@ -284,7 +288,7 @@ def cats_to_adoption():
         Animals.box,
         Animals.title_img_name
     ).filter(
-        Animals.category_id == 1,
+        Animals.category_id == 2,
         Animals.type_id == 2,
         Animals.in_shelter == True
     ).all()

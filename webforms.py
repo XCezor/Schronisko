@@ -55,5 +55,6 @@ class AnimalForm(FlaskForm):
     submit = SubmitField("Dodaj") 
 
 class AnimalMigrateForm(FlaskForm):
-    adoption = SubmitField("Adopcja") 
-    found_home = SubmitField("Znalazł/a dom")
+    recently_arrived = SubmitField("Niedawno trafiły") 
+    adoption = SubmitField("Do adopcji") 
+    found_home = SubmitField("Znalazły dom")
