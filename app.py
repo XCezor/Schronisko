@@ -215,7 +215,7 @@ def animal(id):
             animal.category_id = 1
             animal.in_shelter = True
             flash("Zmieniono kategorię na: 'Niedawno trafiły'")
-        if form.adoption.data:
+        if form.to_adoption.data:
             animal.category_id = 2
             animal.in_shelter = True
             flash("Zmieniono kategorię na: 'Do adopcji'")

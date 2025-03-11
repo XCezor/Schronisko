@@ -28,7 +28,7 @@
             {% endif %}
 
             {% if animal.category_id != 2 or animal.in_shelter == False %}
-                {{ form.adoption() }}
+                {{ form.to_adoption() }}
             {% endif %}
 
             {% if animal.in_shelter == True %}    
