@@ -81,3 +81,8 @@ class Pages(db.Model):
     description = db.Column(db.Text, nullable=False)
     title_img_name = db.Column(db.String(255))
     last_edit_datetime = db.Column(db.DateTime, default=None)
+
+# Wartości stałe do wstawienia ręcznie, raz:
+
+# insert into categories (category_id, name) values (1,'niedawno trafiły'), (2,'do adopcji');
+# insert into types (type_id, name) values (1,'pies'), (2,'kot'), (3,'inne');
