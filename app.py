@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, abort
 from flask_migrate import Migrate
 import psycopg2
 from flask_ckeditor import CKEditor
@@ -204,9 +204,30 @@ def animals():
     
     return render_template("animals/animals.html")
 
+@app.route("/zwierzeta/usuniete")
+@login_required
+def deleted_animals():
+    deleted_animals = db.session.query(
+        Animals.animal_id,
+        Animals.sex,
+        Animals.breed,
+        Animals.age,
+        Animals.weight,
+        Animals.number,
+        Animals.box,
+        Animals.title_img_name
+    ).filter(
+        Animals.is_deleted == True
+    ).all()
+    
+    return render_template("animals/deleted_animals.html", animals=deleted_animals)
+
 @app.route("/zwierzeta/<int:id>", methods=['GET','POST'])
 def animal(id):
     animal = Animals.query.get_or_404(id)
+
+    if animal.is_deleted == True:
+        abort(404)
 
     form = AnimalMigrateForm()
 
@@ -239,6 +260,25 @@ def animal(id):
 
     return render_template("animals/animal.html", animal=animal, images=images, form=form)
 
+@app.route("/zwierzeta/usuniete/<int:id>", methods=['GET','POST'])
+@login_required
+def deleted_animal(id):
+    animal = Animals.query.get_or_404(id)
+
+    if animal.is_deleted == False:
+        abort(404)
+
+    path = app.config['UPLOAD_FOLDER'] + 'animals/' + str(id) + '/' 
+    is_dir = os.path.isdir(path)
+
+    if is_dir:
+        all_files = os.listdir(path)
+        images = [img for img in all_files if os.path.isfile(os.path.join(path, img))]
+    else:
+        images=None
+
+    return render_template("animals/deleted_animal.html", animal=animal, images=images)
+
 @app.route("/zwierzeta/niedawno-trafily")
 def recently_arrived():
     animals = db.session.query(
@@ -252,7 +292,8 @@ def recently_arrived():
         Animals.title_img_name
     ).filter(
         Animals.category_id == 1,
-        Animals.in_shelter == True
+        Animals.in_shelter == True,
+        Animals.is_deleted == False
     ).all()
     return render_template("animals/recently_arrived.html", animals=animals)
 
@@ -271,7 +312,8 @@ def dogs_to_adoption():
     ).filter(
         Animals.category_id == 2,
         Animals.type_id == 1,
-        Animals.in_shelter == True
+        Animals.in_shelter == True,
+        Animals.is_deleted == False
     ).all()
     return render_template("animals/dogs_to_adoption.html", animals=animals)
 
@@ -290,7 +332,8 @@ def cats_to_adoption():
     ).filter(
         Animals.category_id == 2,
         Animals.type_id == 2,
-        Animals.in_shelter == True
+        Animals.in_shelter == True,
+        Animals.is_deleted == False
     ).all()
     return render_template("animals/cats_to_adoption.html", animals=animals)
 
@@ -307,7 +350,8 @@ def found_home():
         Animals.box,
         Animals.title_img_name
     ).filter(
-        Animals.in_shelter == False
+        Animals.in_shelter == False,
+        Animals.is_deleted == False
     ).all()
     return render_template("animals/found_home.html", animals=animals)
 
@@ -473,6 +517,38 @@ def edit_animal(id):
     form.submit.label.text = 'Zapisz'
 
     return render_template("animals/edit_animal.html", form=form)
+
+@app.route("/zwierzeta/usun-zwierze/<int:id>", methods=['GET','POST'])
+@login_required
+def delete_animal(id):
+    animal_to_delete = Animals.query.get_or_404(id)
+
+    if animal_to_delete.is_deleted == True:
+        abort(404)
+
+    animal_to_delete.is_deleted = True
+
+    db.session.add(animal_to_delete)
+    db.session.commit()
+    flash("Usunięto zwierzę.")
+
+    return redirect(url_for('animals'))
+
+@app.route("/zwierzeta/usuniete/przywroc-zwierze/<int:id>", methods=['GET','POST'])
+@login_required
+def restore_animal(id):
+    animal_to_restore = Animals.query.get_or_404(id)
+
+    if animal_to_restore.is_deleted == False:
+        abort(404)
+    
+    animal_to_restore.is_deleted = False
+
+    db.session.add(animal_to_restore)
+    db.session.commit()
+    flash("Przywrócono zwierzę.")
+
+    return redirect(url_for('deleted_animals'))
 
 #===========================INFO==============================
 

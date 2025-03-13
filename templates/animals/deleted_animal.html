@@ -17,27 +17,7 @@
             {% endif %}
         </div>
 
-        {% if current_user.is_authenticated %}
-        <div class="animal-page-migrate-buttons">
-            <h4>Przenieś do kategorii:</h4>
-            <form method="POST">
-            {{ form.hidden_tag() }}
-
-            {% if animal.category_id != 1 or animal.in_shelter == False %}
-                {{ form.recently_arrived() }}
-            {% endif %}
-
-            {% if animal.category_id != 2 or animal.in_shelter == False %}
-                {{ form.to_adoption() }}
-            {% endif %}
-
-            {% if animal.in_shelter == True %}    
-                {{ form.found_home() }}
-            {% endif %}
-
-            </form>
-        </div>
-        {% endif %}
+        
         <div style="clear: both;"></div>
     </div>
 
@@ -79,8 +59,7 @@
 </div>
 
 {% if current_user.is_authenticated %}
-    <a class="misc-post" href="{{ url_for('edit_animal', id=animal.animal_id) }}">Edytuj</a>
-    <a class="misc-post" href="{{ url_for('delete_animal', id=animal.animal_id) }}">Usuń</a>
+    <a class="misc-post" href="{{ url_for('restore_animal', id=animal.animal_id) }}">Przywróć</a>
 {% endif %}
 
 {% endblock %}

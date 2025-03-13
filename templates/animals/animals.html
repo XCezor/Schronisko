@@ -13,9 +13,13 @@
     <a href="{{ url_for('cats_to_adoption') }}">Koty do adopcji</a>
     <a href="{{ url_for('recently_arrived') }}">Niedawno trafiły</a>
     <a href="{{ url_for('found_home') }}">Znalazły dom</a>
-    {% if current_user.is_authenticated %}
-    <a href="{{ url_for('add_animal') }}">Dodaj zwierzę</a>
-    {% endif %}
 </div>
+
+{% if current_user.is_authenticated %}
+<div class="animals-grid">
+    <a href="{{ url_for('add_animal') }}">Dodaj zwierzę</a>
+    <a href="{{ url_for('deleted_animals') }}">Usunięte Zwierzęta</a>
+</div>
+{% endif %}
 
 {% endblock %}
