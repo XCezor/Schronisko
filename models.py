@@ -31,6 +31,7 @@ class Animals(db.Model):
     animal_id = db.Column(db.Integer, primary_key=True)
     type_id = db.Column(db.Integer, db.ForeignKey('types.type_id')) 
     category_id = db.Column(db.Integer, db.ForeignKey('categories.category_id')) 
+    is_deleted = db.Column(db.Boolean, nullable=False, server_default="false")
     in_shelter = db.Column(db.Boolean, nullable=False, server_default="true")
     name = db.Column(db.String(30))
     breed = db.Column(db.String(30))
