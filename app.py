@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, abort
 from flask_migrate import Migrate
 import psycopg2
 from flask_ckeditor import CKEditor
@@ -7,7 +7,7 @@ from flask_login import UserMixin, login_user, LoginManager, login_required, log
 import bleach
 from bs4 import BeautifulSoup
 from datetime import datetime
-from webforms import PostForm, UserForm, LoginForm, PagesForm, AnimalForm
+from webforms import PostForm, UserForm, LoginForm, PagesForm, AnimalForm, AnimalMigrateForm
 from werkzeug.utils import secure_filename
 import uuid as uuid 
 import os
@@ -20,6 +20,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://application:Ad0ptujPs4LubK
 
 UPLOAD_FOLDER = 'static/uploads/'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024 # Limit przesyłanych zdjęć: 5MB = 5 * 1024 * 1024
 
 # Login Manager
 
@@ -33,7 +34,7 @@ def load_user(user_id):
 
 # Baza danych
 
-from models import db, Users, Animals, Types, Posts, Pages
+from models import db, Users, Animals, Types, Categories, Posts, Pages
 
 migrate = Migrate(app, db)
 
@@ -143,7 +144,7 @@ def add_post():
                 file_path = os.path.join(catalog_path, title_img_name)
                 form.title_img.data.save(file_path)
 
-            if form.images.data:
+            if any(file.filename for file in form.images.data):
                 for file in form.images.data:
                     safe_filename = secure_filename(file.filename)
                     img_name = str(uuid.uuid1()) + "_" + safe_filename
@@ -200,20 +201,52 @@ def delete_post(id):
 
 @app.route("/zwierzeta")
 def animals():
-    animals = db.session.query(
-        Animals.category, 
-        Animals.name, 
-        Animals.age, 
-        Types.name.label("type"),
+    
+    return render_template("animals/animals.html")
+
+@app.route("/zwierzeta/usuniete")
+@login_required
+def deleted_animals():
+    deleted_animals = db.session.query(
+        Animals.animal_id,
+        Animals.sex,
+        Animals.age,
+        Animals.weight,
         Animals.number,
         Animals.box,
-        ).join(Types, Types.type_id == Animals.type_id).all()
+        Animals.title_img_name
+    ).filter(
+        Animals.is_deleted == True
+    ).all()
     
-    return render_template("animals/animals.html", animals=animals)
+    return render_template("animals/deleted_animals.html", animals=deleted_animals)
 
-@app.route("/zwierzeta/<int:id>")
+@app.route("/zwierzeta/<int:id>", methods=['GET','POST'])
 def animal(id):
     animal = Animals.query.get_or_404(id)
+
+    if animal.is_deleted == True:
+        abort(404)
+
+    form = AnimalMigrateForm()
+
+    if form.validate_on_submit():
+        if form.recently_arrived.data:
+            animal.category_id = 1
+            animal.in_shelter = True
+            flash("Zmieniono kategorię na: 'Niedawno trafiły'")
+        if form.to_adoption.data:
+            animal.category_id = 2
+            animal.in_shelter = True
+            flash("Zmieniono kategorię na: 'Do adopcji'")
+        if form.found_home.data:
+            animal.in_shelter = False
+            flash("Zmieniono kategorię na: 'Znalazły dom'")
+
+        db.session.add(animal)
+        db.session.commit()
+
+        return redirect(url_for('animal', id=animal.animal_id))
 
     path = app.config['UPLOAD_FOLDER'] + 'animals/' + str(id) + '/' 
     is_dir = os.path.isdir(path)
@@ -224,31 +257,49 @@ def animal(id):
     else:
         images=None
 
-    return render_template("animals/animal.html", animal=animal, images=images)
+    return render_template("animals/animal.html", animal=animal, images=images, form=form)
 
-@app.route("/zwierzeta/znalezione")
-def found():
+@app.route("/zwierzeta/usuniete/<int:id>", methods=['GET','POST'])
+@login_required
+def deleted_animal(id):
+    animal = Animals.query.get_or_404(id)
+
+    if animal.is_deleted == False:
+        abort(404)
+
+    path = app.config['UPLOAD_FOLDER'] + 'animals/' + str(id) + '/' 
+    is_dir = os.path.isdir(path)
+
+    if is_dir:
+        all_files = os.listdir(path)
+        images = [img for img in all_files if os.path.isfile(os.path.join(path, img))]
+    else:
+        images=None
+
+    return render_template("animals/deleted_animal.html", animal=animal, images=images)
+
+@app.route("/zwierzeta/niedawno-trafily")
+def recently_arrived():
     animals = db.session.query(
         Animals.animal_id,
         Animals.sex,
-        Animals.breed,
         Animals.age,
         Animals.weight,
         Animals.number,
         Animals.box,
         Animals.title_img_name
     ).filter(
-        Animals.category == 'znalezione',
-        Animals.in_shelter == True
+        Animals.category_id == 1,
+        Animals.in_shelter == True,
+        Animals.is_deleted == False
     ).all()
-    return render_template("animals/found.html", animals=animals)
+    return render_template("animals/recently_arrived.html", animals=animals)
 
-@app.route("/zwierzeta/do-adopcji")
-def to_adoption():
+@app.route("/zwierzeta/psy-do-adopcji")
+def dogs_to_adoption():
     animals = db.session.query(
         Animals.animal_id,
         Animals.name,
-        Animals.breed,
         Animals.sex,
         Animals.age,
         Animals.weight,
@@ -256,17 +307,37 @@ def to_adoption():
         Animals.box,
         Animals.title_img_name
     ).filter(
-        Animals.category == 'adopcja',
-        Animals.in_shelter == True
+        Animals.category_id == 2,
+        Animals.type_id == 1,
+        Animals.in_shelter == True,
+        Animals.is_deleted == False
     ).all()
-    return render_template("animals/to_adoption.html", animals=animals)
+    return render_template("animals/dogs_to_adoption.html", animals=animals)
+
+@app.route("/zwierzeta/koty-do-adopcji")
+def cats_to_adoption():
+    animals = db.session.query(
+        Animals.animal_id,
+        Animals.name,
+        Animals.sex,
+        Animals.age,
+        Animals.weight,
+        Animals.number,
+        Animals.box,
+        Animals.title_img_name
+    ).filter(
+        Animals.category_id == 2,
+        Animals.type_id == 2,
+        Animals.in_shelter == True,
+        Animals.is_deleted == False
+    ).all()
+    return render_template("animals/cats_to_adoption.html", animals=animals)
 
 @app.route("/zwierzeta/znalazly-dom")
 def found_home():
     animals = db.session.query(
         Animals.animal_id,
         Animals.name,
-        Animals.breed,
         Animals.sex,
         Animals.age,
         Animals.weight,
@@ -274,7 +345,8 @@ def found_home():
         Animals.box,
         Animals.title_img_name
     ).filter(
-        Animals.in_shelter == False
+        Animals.in_shelter == False,
+        Animals.is_deleted == False
     ).all()
     return render_template("animals/found_home.html", animals=animals)
 
@@ -288,6 +360,12 @@ def add_animal():
     for type in types:
         type_choices.append((type.type_id, type.name))
     form.type.choices = type_choices
+
+    categories = Categories.query.all()
+    category_choices = []
+    for category in categories:
+        category_choices.append((category.category_id, category.name))
+    form.category.choices = category_choices
     
     if form.validate_on_submit():
         
@@ -298,24 +376,30 @@ def add_animal():
             title_img_name = None
 
         new_animal = Animals(
-            category = form.category.data,
+            category_id = form.category.data,
             in_shelter = True,
             name = form.name.data,
             type_id = form.type.data, 
-            breed = form.breed.data,
             sex = form.sex.data,
+            castration_sterilization = form.castration_sterilization.data,
             age = form.age.data,
+            fur = form.fur.data,
             weight = form.weight.data,
             number = form.number.data,
             box = form.box.data,
+            attitude_to_dogs = form.attitude_to_dogs.data,
+            attitude_to_cats = form.attitude_to_cats.data,
+            attitude_to_people = form.attitude_to_people.data,
+            character = form.character.data,
             description = form.description.data,
             title_img_name = title_img_name
         )
+
         db.session.add(new_animal)
         db.session.commit()
 
-        # Zapisywanie plików
-        if form.title_img.data or form.images.data:
+        # Zapisywanie plików 
+        if form.title_img.data or any(img.filename for img in form.images.data):
             catalog_path = os.path.join(app.config['UPLOAD_FOLDER'], 'animals', str(new_animal.animal_id))
             os.makedirs(catalog_path, exist_ok=True)
 
@@ -323,7 +407,7 @@ def add_animal():
                 file_path = os.path.join(catalog_path, title_img_name)
                 form.title_img.data.save(file_path)
 
-            if form.images.data:
+            if any(img.filename for img in form.images.data):
                 for file in form.images.data:
                     safe_filename = secure_filename(file.filename)
                     img_name = str(uuid.uuid1()) + "_" + safe_filename
@@ -336,6 +420,127 @@ def add_animal():
         return redirect(url_for('add_animal'))
 
     return render_template("animals/add_animal.html", form=form)
+
+@app.route("/zwierzeta/edytuj-zwierze/<int:id>", methods=['GET', 'POST'])
+@login_required
+def edit_animal(id):
+    form = AnimalForm()
+
+    animal = Animals.query.get_or_404(id)
+
+    types = Types.query.all()
+    type_choices = []
+    for type in types:
+        type_choices.append((type.type_id, type.name))
+    form.type.choices = type_choices
+
+    categories = Categories.query.all()
+    category_choices = []
+    for category in categories:
+        category_choices.append((category.category_id, category.name))
+    form.category.choices = category_choices
+
+    if form.validate_on_submit():
+        
+        if form.title_img.data:
+            safe_filename = secure_filename(form.title_img.data.filename)
+            title_img_name = str(uuid.uuid1()) + "_" + safe_filename
+        else:
+            title_img_name = None
+        
+        animal.category_id = form.category.data,
+        animal.in_shelter = True,
+        animal.name = form.name.data,
+        animal.type_id = form.type.data, 
+        animal.sex = form.sex.data,
+        animal.castration_sterilization = form.castration_sterilization.data,
+        animal.age = form.age.data,
+        animal.fur = form.fur.data,
+        animal.weight = form.weight.data,
+        animal.number = form.number.data,
+        animal.box = form.box.data,
+        animal.attitude_to_dogs = form.attitude_to_dogs.data,
+        animal.attitude_to_cats = form.attitude_to_cats.data,
+        animal.attitude_to_people = form.attitude_to_people.data,
+        animal.character = form.character.data,
+        animal.description = form.description.data,
+        animal.title_img_name = title_img_name
+
+        db.session.add(animal)
+        db.session.commit()
+
+        # Zapisywanie plików 
+        if form.title_img.data or any(img.filename for img in form.images.data):
+            catalog_path = os.path.join(app.config['UPLOAD_FOLDER'], 'animals', str(animal.animal_id))
+            os.makedirs(catalog_path, exist_ok=True)
+
+            if form.title_img.data:
+                file_path = os.path.join(catalog_path, title_img_name)
+                form.title_img.data.save(file_path)
+
+            if any(img.filename for img in form.images.data):
+                for file in form.images.data:
+                    safe_filename = secure_filename(file.filename)
+                    img_name = str(uuid.uuid1()) + "_" + safe_filename
+
+                    file_path = os.path.join(catalog_path, img_name)
+                    file.save(file_path)
+
+        flash("Zapisano zmiany!")
+
+        return redirect(url_for('edit_animal'))
+
+    form.type.data = animal.type_id
+    form.category.data = animal.category_id
+    form.name.data = animal.name
+    form.age.data = animal.age
+    form.sex.data = animal.sex
+    form.castration_sterilization.data = animal.castration_sterilization
+    form.weight.data = animal.weight
+    form.fur.data = animal.fur
+    form.number.data = animal.number
+    form.box.data = animal.box
+    form.attitude_to_dogs.data = animal.attitude_to_dogs
+    form.attitude_to_cats.data = animal.attitude_to_cats
+    form.attitude_to_people.data = animal.attitude_to_people
+    form.character.data = animal.character
+    form.description.data = animal.description
+
+    form.submit.label.text = 'Zapisz'
+
+    return render_template("animals/edit_animal.html", form=form)
+
+@app.route("/zwierzeta/usun-zwierze/<int:id>", methods=['GET','POST'])
+@login_required
+def delete_animal(id):
+    animal_to_delete = Animals.query.get_or_404(id)
+
+    if animal_to_delete.is_deleted == True:
+        abort(404)
+
+    animal_to_delete.is_deleted = True
+
+    db.session.add(animal_to_delete)
+    db.session.commit()
+    flash("Usunięto zwierzę.")
+
+    return redirect(url_for('animals'))
+
+@app.route("/zwierzeta/usuniete/przywroc-zwierze/<int:id>", methods=['GET','POST'])
+@login_required
+def restore_animal(id):
+    animal_to_restore = Animals.query.get_or_404(id)
+
+    if animal_to_restore.is_deleted == False:
+        abort(404)
+    
+    animal_to_restore.is_deleted = False
+
+    db.session.add(animal_to_restore)
+    db.session.commit()
+    flash("Przywrócono zwierzę.")
+
+    return redirect(url_for('deleted_animals'))
 
 #===========================INFO==============================
 

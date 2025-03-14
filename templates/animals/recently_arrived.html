@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block body %}
-<h1>Znalazły dom</h1>
+<h1>Niedawno trafiły</h1>
 
 <div class="animal-boxes-module">
     {% for animal in animals %}
@@ -17,12 +17,7 @@
                     {% endif %}
                 </div>
                 <div class="animal-box-description">
-                    {% if animal.name %}
-                        <h3>{{ animal.name }}</h3>
-                        {{ animal.number }}<br/>
-                    {% else %}
-                        <h3>{{ animal.number }}</h3>
-                    {% endif %}
+                    <h3>{{ animal.number }}</h3>
                     {{ animal.sex }}, {{ animal.age }} lat, {{ animal.weight }} kg<br/>
                     {{ animal.box }}<br/>
                 </div>

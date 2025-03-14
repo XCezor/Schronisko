@@ -5,11 +5,11 @@
 {% endblock %}
 
 {% block body %}
-<h1>Znalazły dom</h1>
+<h1>Usunięte zwierzęta</h1>
 
 <div class="animal-boxes-module">
     {% for animal in animals %}
-        <a href="{{ url_for('animal', id=animal.animal_id) }}">
+        <a href="{{ url_for('deleted_animal', id=animal.animal_id) }}">
             <div class="animal-box">
                 <div class="animal-box-img">
                     {% if animal.title_img_name %}
@@ -30,5 +30,9 @@
         </a>
     {% endfor %}
 </div>
+
+{% if not animals %}
+Brak usuniętych zwierząt.
+{% endif %}
 
 {% endblock %}
