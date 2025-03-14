@@ -3,6 +3,7 @@
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css')}}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/posts.css')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/animals.css') }}">
 {% endblock %}
 
 {% block body %}
@@ -51,47 +52,71 @@
     </div>
 
     {% endfor %}
+
+    <a href="{{ url_for('posts') }}">Więcej</a>
 </div>
-<div id="animals-in-schelter">
-    <h1>ZWIERZĘTA W SCHRONISKU</h1>
-    <div class="img-desc-button-box">
-        <div class="img-desc-button-box_img"></div>
-        <div class="img-desc-button-box_desc-button">
-            <div class="img-desc-button-box_desc">
-                Nasze schronisko jest domem dla wielu rodzajów zwierząt, 
-                głównie są to psy i koty, ale czasami nie tylko!
-            </div>
-            <div class="img-desc-button-box_button">
-                <a href="{{ url_for('animals') }}"><input type="button" value="Zobacz"/></a>
-            </div>
-        </div>
+<div id="our-seniors">
+    <h1>NASI SENIORZY</h1>
+    
+    <div class="animal-boxes-module">
+        {% for animal in seniors %}
+            <a href="{{ url_for('animal', id=animal.animal_id) }}">
+                <div class="animal-box">
+                    <div class="animal-box-img">
+                        {% if animal.title_img_name %}
+                            <img src="{{ url_for('static', filename='uploads/animals/' + animal.animal_id |string + '/' + animal.title_img_name) }}" alt="Zdjęcie zwierzęcia.">
+                        {% endif %}
+                    </div>
+                    <div class="animal-box-description">
+                        {% if animal.name %}
+                            <h3>{{ animal.name }}</h3>
+                            {{ animal.number }}<br/>
+                        {% else %}
+                            <h3>{{ animal.number }}</h3>
+                        {% endif %}
+                        {{ animal.sex }}, {{ animal.age }} lat, {{ animal.weight }} kg<br/>
+                        {{ animal.box }}<br/>
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
     </div>
+
 </div>
-<div id="adoption-in-a-nutshell">
-    <h1>ADOPCJA W PIGUŁCE</h1>
+<div id="shelter-in-numbers">
+    <h1>SCHRONISKO W LICZBACH</h1>
     <div class="info-blocks-module">
         <div class="info-block">
             <div class="info-block-img">
                 <img src="/static/images/logo.png" alt="Ikona psa"/>
             </div>
+            <div class="info-block-number">
+                {{ in_schelter }}
+            </div>
             <div class="info-block-text">
-                Pamiętaj, że adopcja to odpowiedzialność!
+                Zwierzęta w schronisku
             </div>
         </div>
         <div class="info-block">
             <div class="info-block-img">
                 <img src="/static/images/logo.png" alt="Ikona psa"/>
             </div>
+            <div class="info-block-number">
+                {{ arrived_in_current_month }}
+            </div>
             <div class="info-block-text">
-                Bądź cierpliwy! Zwierzę musi się przyzwyczaić do nowego otoczenia.
+                Trafiło w tym miesiącu
             </div>
         </div>
         <div class="info-block">
             <div class="info-block-img">
                 <img src="/static/images/logo.png" alt="Ikona psa"/>
             </div>
+            <div class="info-block-number">
+                {{ found_home }}
+            </div>
             <div class="info-block-text">
-                Wybierz odpowiednie zwierzę dla siebie.
+                Znalazło dom
             </div>
         </div>
     </div>
