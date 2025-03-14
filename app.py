@@ -210,7 +210,6 @@ def deleted_animals():
     deleted_animals = db.session.query(
         Animals.animal_id,
         Animals.sex,
-        Animals.breed,
         Animals.age,
         Animals.weight,
         Animals.number,
@@ -284,7 +283,6 @@ def recently_arrived():
     animals = db.session.query(
         Animals.animal_id,
         Animals.sex,
-        Animals.breed,
         Animals.age,
         Animals.weight,
         Animals.number,
@@ -302,7 +300,6 @@ def dogs_to_adoption():
     animals = db.session.query(
         Animals.animal_id,
         Animals.name,
-        Animals.breed,
         Animals.sex,
         Animals.age,
         Animals.weight,
@@ -322,7 +319,6 @@ def cats_to_adoption():
     animals = db.session.query(
         Animals.animal_id,
         Animals.name,
-        Animals.breed,
         Animals.sex,
         Animals.age,
         Animals.weight,
@@ -342,7 +338,6 @@ def found_home():
     animals = db.session.query(
         Animals.animal_id,
         Animals.name,
-        Animals.breed,
         Animals.sex,
         Animals.age,
         Animals.weight,
@@ -385,7 +380,6 @@ def add_animal():
             in_shelter = True,
             name = form.name.data,
             type_id = form.type.data, 
-            breed = form.breed.data,
             sex = form.sex.data,
             castration_sterilization = form.castration_sterilization.data,
             age = form.age.data,
@@ -458,7 +452,6 @@ def edit_animal(id):
         animal.in_shelter = True,
         animal.name = form.name.data,
         animal.type_id = form.type.data, 
-        animal.breed = form.breed.data,
         animal.sex = form.sex.data,
         animal.castration_sterilization = form.castration_sterilization.data,
         animal.age = form.age.data,
@@ -500,7 +493,6 @@ def edit_animal(id):
     form.type.data = animal.type_id
     form.category.data = animal.category_id
     form.name.data = animal.name
-    form.breed.data = animal.breed
     form.age.data = animal.age
     form.sex.data = animal.sex
     form.castration_sterilization.data = animal.castration_sterilization

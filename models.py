@@ -34,7 +34,6 @@ class Animals(db.Model):
     is_deleted = db.Column(db.Boolean, nullable=False, server_default="false")
     in_shelter = db.Column(db.Boolean, nullable=False, server_default="true")
     name = db.Column(db.String(30))
-    breed = db.Column(db.String(30))
     date_of_birth = db.Column(db.TIMESTAMP)
     age = db.Column(db.Integer)
     sex = db.Column(db.String(6), nullable=False)
