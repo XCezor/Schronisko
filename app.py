@@ -322,7 +322,7 @@ def cats_to_adoption():
         Animals.sex,
         Animals.age,
         Animals.weight,
-        Animals.number,
+        Animals.number, 
         Animals.box,
         Animals.title_img_name
     ).filter(
